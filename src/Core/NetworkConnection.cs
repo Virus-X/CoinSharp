@@ -34,7 +34,7 @@ namespace CoinSharp
     /// </remarks>
     public class NetworkConnection : IDisposable
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (NetworkConnection));
+        private static readonly ILog Log = Common.Logger.GetLoggerForDeclaringType();
 
         private Socket _socket;
         private Stream _out;
@@ -60,12 +60,12 @@ namespace CoinSharp
         /// <param name="connectTimeout">Timeout in milliseconds when initially connecting to peer</param>
         /// <exception cref="IOException">If there is a network related failure.</exception>
         /// <exception cref="ProtocolException">If the version negotiation failed.</exception>
-        public NetworkConnection(PeerAddress peerAddress, NetworkParameters @params, uint bestHeight, int connectTimeout)
+        public NetworkConnection(PeerAddress peerAddress, NetworkParameters networkParams, uint bestHeight, int connectTimeout)
         {
-            _params = @params;
+            _params = networkParams;
             _remoteIp = peerAddress.Addr;
 
-            var port = (peerAddress.Port > 0) ? peerAddress.Port : @params.Port;
+            var port = (peerAddress.Port > 0) ? peerAddress.Port : networkParams.Port;
 
             var address = new IPEndPoint(_remoteIp, port);
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -76,11 +76,11 @@ namespace CoinSharp
             _in = new NetworkStream(_socket, FileAccess.Read);
 
             // the version message never uses check-summing. Update check-summing property after version is read.
-            _serializer = new BitcoinSerializer(@params, false);
+            _serializer = new BitcoinSerializer(networkParams, false);
 
             // Announce ourselves. This has to come first to connect to clients beyond v0.30.20.2 which wait to hear
             // from us until they send their version message back.
-            WriteMessage(new VersionMessage(@params, bestHeight));
+            WriteMessage(new VersionMessage(networkParams, bestHeight));
             // When connecting, the remote peer sends us a version message with various bits of
             // useful data in it. We need to know the peer protocol version before we can talk to it.
             _versionMessage = (VersionMessage) ReadMessage();
@@ -91,7 +91,7 @@ namespace CoinSharp
             ReadMessage();
             // Switch to the new protocol version.
             var peerVersion = _versionMessage.ClientVersion;
-            _log.InfoFormat("Connected to peer: version={0}, subVer='{1}', services=0x{2:X}, time={3}, blocks={4}",
+            Log.InfoFormat("Connected to peer: version={0}, subVer='{1}', services=0x{2:X}, time={3}, blocks={4}",
                             peerVersion,
                             _versionMessage.SubVer,
                             _versionMessage.LocalServices,
@@ -120,8 +120,8 @@ namespace CoinSharp
 
         /// <exception cref="IOException"/>
         /// <exception cref="ProtocolException"/>
-        public NetworkConnection(IPAddress inetAddress, NetworkParameters @params, uint bestHeight, int connectTimeout)
-            : this(new PeerAddress(inetAddress), @params, bestHeight, connectTimeout)
+        public NetworkConnection(IPAddress inetAddress, NetworkParameters networkParams, uint bestHeight, int connectTimeout)
+            : this(new PeerAddress(inetAddress), networkParams, bestHeight, connectTimeout)
         {
         }
 

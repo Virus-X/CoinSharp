@@ -40,7 +40,7 @@ namespace CoinSharp.Store
     /// </remarks>
     public class BoundedOverheadBlockStore : IBlockStore
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (BoundedOverheadBlockStore));
+        private static readonly ILog Log = Common.Logger.GetLoggerForDeclaringType();
         private const byte _fileFormatVersion = 1;
 
         // We keep some recently found blocks in the blockCache. It can help to optimize some cases where we are
@@ -127,9 +127,9 @@ namespace CoinSharp.Store
             }
 
             /// <exception cref="ProtocolException"/>
-            public Block GetHeader(NetworkParameters @params)
+            public Block GetHeader(NetworkParameters networkParams)
             {
-                return new Block(@params, _blockHeader);
+                return new Block(networkParams, _blockHeader);
             }
 
             public uint Height
@@ -138,29 +138,29 @@ namespace CoinSharp.Store
             }
 
             /// <exception cref="ProtocolException"/>
-            public StoredBlock ToStoredBlock(NetworkParameters @params)
+            public StoredBlock ToStoredBlock(NetworkParameters networkParams)
             {
-                return new StoredBlock(GetHeader(@params), ChainWork, Height);
+                return new StoredBlock(GetHeader(networkParams), ChainWork, Height);
             }
         }
 
         /// <exception cref="BlockStoreException"/>
-        public BoundedOverheadBlockStore(NetworkParameters @params, FileInfo file)
+        public BoundedOverheadBlockStore(NetworkParameters networkParams, FileInfo file)
         {
-            _params = @params;
+            _params = networkParams;
             try
             {
                 Load(file);
             }
             catch (IOException e)
             {
-                _log.Error("failed to load block store from file", e);
-                CreateNewStore(@params, file);
+                Log.Error("failed to load block store from file", e);
+                CreateNewStore(networkParams, file);
             }
         }
 
         /// <exception cref="BlockStoreException"/>
-        private void CreateNewStore(NetworkParameters @params, FileInfo file)
+        private void CreateNewStore(NetworkParameters networkParams, FileInfo file)
         {
             // Create a new block store if the file wasn't found or anything went wrong whilst reading.
             _blockCache.Clear();
@@ -193,7 +193,7 @@ namespace CoinSharp.Store
             try
             {
                 // Set up the genesis block. When we start out fresh, it is by definition the top of the chain.
-                var genesis = @params.GenesisBlock.CloneAsHeader();
+                var genesis = networkParams.GenesisBlock.CloneAsHeader();
                 var storedGenesis = new StoredBlock(genesis, genesis.GetWork(), 0);
                 _chainHead = storedGenesis.Header.Hash;
                 _channel.Write(_chainHead.Bytes);
@@ -209,7 +209,7 @@ namespace CoinSharp.Store
         /// <exception cref="BlockStoreException"/>
         private void Load(FileInfo file)
         {
-            _log.InfoFormat("Reading block store from {0}", file);
+            Log.InfoFormat("Reading block store from {0}", file);
             if (_channel != null)
             {
                 _channel.Dispose();
@@ -233,7 +233,7 @@ namespace CoinSharp.Store
                 if (_channel.Read(chainHeadHash) < chainHeadHash.Length)
                     throw new BlockStoreException("Truncated store: could not read chain head hash.");
                 _chainHead = new Sha256Hash(chainHeadHash);
-                _log.InfoFormat("Read chain head from disk: {0}", _chainHead);
+                Log.InfoFormat("Read chain head from disk: {0}", _chainHead);
                 _channel.Position = _channel.Length - Record.Size;
             }
             catch (IOException)

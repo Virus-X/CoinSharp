@@ -31,14 +31,14 @@ namespace CoinSharp.Test.Store
             try
             {
                 Console.WriteLine(temp.FullName);
-                var @params = NetworkParameters.UnitTests();
-                var to = new EcKey().ToAddress(@params);
+                var networkParams = NetworkParameters.UnitTests();
+                var to = new EcKey().ToAddress(networkParams);
                 StoredBlock b1;
-                using (var store = new BoundedOverheadBlockStore(@params, temp))
+                using (var store = new BoundedOverheadBlockStore(networkParams, temp))
                 {
                     // Check the first block in a new store is the genesis block.
                     var genesis = store.GetChainHead();
-                    Assert.AreEqual(@params.GenesisBlock, genesis.Header);
+                    Assert.AreEqual(networkParams.GenesisBlock, genesis.Header);
 
                     // Build a new block.
                     b1 = genesis.Build(genesis.Header.CreateNextBlock(to).CloneAsHeader());
@@ -46,7 +46,7 @@ namespace CoinSharp.Test.Store
                     store.SetChainHead(b1);
                 }
                 // Check we can get it back out again if we rebuild the store object.
-                using (var store = new BoundedOverheadBlockStore(@params, temp))
+                using (var store = new BoundedOverheadBlockStore(networkParams, temp))
                 {
                     var b2 = store.Get(b1.Header.Hash);
                     Assert.AreEqual(b1, b2);

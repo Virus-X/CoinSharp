@@ -32,7 +32,7 @@ namespace CoinSharp.Discovery
     /// </remarks>
     public class DnsDiscovery : IPeerDiscovery
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (DnsDiscovery));
+        private static readonly ILog Log = Common.Logger.GetLoggerForDeclaringType();
 
         private readonly string[] _hostNames;
         private readonly NetworkParameters _netParams;
@@ -99,7 +99,7 @@ namespace CoinSharp.Discovery
                 catch (Exception e)
                 {
                     failedLookups++;
-                    _log.InfoFormat("DNS lookup for {0} failed.", hostName);
+                    Log.InfoFormat("DNS lookup for {0} failed.", hostName);
 
                     if (failedLookups == _hostNames.Length)
                     {

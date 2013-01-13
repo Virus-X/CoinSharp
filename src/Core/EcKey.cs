@@ -43,8 +43,8 @@ namespace CoinSharp
         static EcKey()
         {
             // All clients must agree on the curve to use by agreement. BitCoin uses secp256k1.
-            var @params = SecNamedCurves.GetByName("secp256k1");
-            _ecParams = new ECDomainParameters(@params.Curve, @params.G, @params.N, @params.H);
+            var networkParams = SecNamedCurves.GetByName("secp256k1");
+            _ecParams = new ECDomainParameters(networkParams.Curve, networkParams.G, networkParams.N, networkParams.H);
             _secureRandom = new SecureRandom();
         }
 
@@ -152,10 +152,10 @@ namespace CoinSharp
         /// Returns the address that corresponds to the public part of this ECKey. Note that an address is derived from
         /// the RIPEMD-160 hash of the public key and is not the public key itself (which is too large to be convenient).
         /// </summary>
-        public Address ToAddress(NetworkParameters @params)
+        public Address ToAddress(NetworkParameters networkParams)
         {
             var hash160 = Utils.Sha256Hash160(_pub);
-            return new Address(@params, hash160);
+            return new Address(networkParams, hash160);
         }
 
         /// <summary>
@@ -190,8 +190,8 @@ namespace CoinSharp
         public static bool Verify(byte[] data, byte[] signature, byte[] pub)
         {
             var signer = new ECDsaSigner();
-            var @params = new ECPublicKeyParameters(_ecParams.Curve.DecodePoint(pub), _ecParams);
-            signer.Init(false, @params);
+            var networkParams = new ECPublicKeyParameters(_ecParams.Curve.DecodePoint(pub), _ecParams);
+            signer.Init(false, networkParams);
             DerInteger r;
             DerInteger s;
             using (var decoder = new Asn1InputStream(signature))
@@ -259,9 +259,9 @@ namespace CoinSharp
         /// </summary>
         /// <param name="params">The network this key is intended for use on.</param>
         /// <returns>Private key bytes as a <see cref="DumpedPrivateKey"/>.</returns>
-        public DumpedPrivateKey GetPrivateKeyEncoded(NetworkParameters @params)
+        public DumpedPrivateKey GetPrivateKeyEncoded(NetworkParameters networkParams)
         {
-            return new DumpedPrivateKey(@params, GetPrivKeyBytes());
+            return new DumpedPrivateKey(networkParams, GetPrivKeyBytes());
         }
     }
 }

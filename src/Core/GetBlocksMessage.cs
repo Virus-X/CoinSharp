@@ -28,8 +28,8 @@ namespace CoinSharp
         private readonly IList<Sha256Hash> _locator;
         private readonly Sha256Hash _stopHash;
 
-        public GetBlocksMessage(NetworkParameters @params, IList<Sha256Hash> locator, Sha256Hash stopHash)
-            : base(@params)
+        public GetBlocksMessage(NetworkParameters networkParams, IList<Sha256Hash> locator, Sha256Hash stopHash)
+            : base(networkParams)
         {
             _locator = locator;
             _stopHash = stopHash;

@@ -29,12 +29,12 @@ namespace CoinSharp.Examples
         public static void Run(string[] args)
         {
             Console.WriteLine("Connecting to node");
-            var @params = NetworkParameters.ProdNet();
+            var networkParams = NetworkParameters.ProdNet();
 
-            using (var blockStore = new MemoryBlockStore(@params))
+            using (var blockStore = new MemoryBlockStore(networkParams))
             {
-                var chain = new BlockChain(@params, blockStore);
-                var peer = new Peer(@params, new PeerAddress(IPAddress.Loopback), chain);
+                var chain = new BlockChain(networkParams, blockStore);
+                var peer = new Peer(networkParams, new PeerAddress(IPAddress.Loopback), chain);
                 peer.Connect();
                 new Thread(peer.Run).Start();
 

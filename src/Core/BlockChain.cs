@@ -46,7 +46,7 @@ namespace CoinSharp
     /// </remarks>
     public class BlockChain
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (BlockChain));
+        private static readonly ILog Log = Common.Logger.GetLoggerForDeclaringType();
 
         /// <summary>
         /// Keeps a map of block hashes to StoredBlocks.
@@ -80,8 +80,8 @@ namespace CoinSharp
         /// <see cref="BoundedOverheadBlockStore"/> if you'd like to ensure fast start-up the next time you run the program.
         /// </remarks>
         /// <exception cref="BlockStoreException"/>
-        public BlockChain(NetworkParameters @params, Wallet wallet, IBlockStore blockStore)
-            : this(@params, new List<Wallet>(), blockStore)
+        public BlockChain(NetworkParameters networkParams, Wallet wallet, IBlockStore blockStore)
+            : this(networkParams, new List<Wallet>(), blockStore)
         {
             if (wallet != null)
                 AddWallet(wallet);
@@ -92,8 +92,8 @@ namespace CoinSharp
         /// and receiving coins but rather, just want to explore the network data structures.
         /// </summary>
         /// <exception cref="BlockStoreException"/>
-        public BlockChain(NetworkParameters @params, IBlockStore blockStore)
-            : this(@params, new List<Wallet>(), blockStore)
+        public BlockChain(NetworkParameters networkParams, IBlockStore blockStore)
+            : this(networkParams, new List<Wallet>(), blockStore)
         {
         }
 
@@ -101,12 +101,12 @@ namespace CoinSharp
         /// Constructs a BlockChain connected to the given list of wallets and a store.
         /// </summary>
         /// <exception cref="BlockStoreException"/>
-        public BlockChain(NetworkParameters @params, IEnumerable<Wallet> wallets, IBlockStore blockStore)
+        public BlockChain(NetworkParameters networkParams, IEnumerable<Wallet> wallets, IBlockStore blockStore)
         {
             _blockStore = blockStore;
             _chainHead = blockStore.GetChainHead();
-            _log.InfoFormat("chain head is:{0}{1}", Environment.NewLine, _chainHead.Header);
-            _params = @params;
+            Log.InfoFormat("chain head is:{0}{1}", Environment.NewLine, _chainHead.Header);
+            _params = networkParams;
             _wallets = new List<Wallet>(wallets);
         }
 
@@ -152,7 +152,7 @@ namespace CoinSharp
                 if (Environment.TickCount - _statsLastTime > 1000)
                 {
                     // More than a second passed since last stats logging.
-                    _log.InfoFormat("{0} blocks per second", _statsBlocksAdded);
+                    Log.InfoFormat("{0} blocks per second", _statsBlocksAdded);
                     _statsLastTime = Environment.TickCount;
                     _statsBlocksAdded = 0;
                 }
@@ -186,8 +186,8 @@ namespace CoinSharp
                 }
                 catch (VerificationException e)
                 {
-                    _log.Error("Failed to verify block:", e);
-                    _log.Error(block.HashAsString);
+                    Log.Error("Failed to verify block:", e);
+                    Log.Error(block.HashAsString);
                     throw;
                 }
 
@@ -199,7 +199,7 @@ namespace CoinSharp
                     // We can't find the previous block. Probably we are still in the process of downloading the chain and a
                     // block was solved whilst we were doing it. We put it to one side and try to connect it later when we
                     // have more blocks.
-                    _log.WarnFormat("Block does not connect: {0}", block.HashAsString);
+                    Log.WarnFormat("Block does not connect: {0}", block.HashAsString);
                     _unconnectedBlocks.Add(block);
                     return false;
                 }
@@ -228,7 +228,7 @@ namespace CoinSharp
             {
                 // This block connects to the best known block, it is a normal continuation of the system.
                 ChainHead = newStoredBlock;
-                _log.DebugFormat("Chain is now {0} blocks high", _chainHead.Height);
+                Log.DebugFormat("Chain is now {0} blocks high", _chainHead.Height);
                 if (newTransactions != null)
                     SendTransactionsToWallet(newStoredBlock, NewBlockType.BestChain, newTransactions);
             }
@@ -241,13 +241,13 @@ namespace CoinSharp
                 var haveNewBestChain = newStoredBlock.MoreWorkThan(_chainHead);
                 if (haveNewBestChain)
                 {
-                    _log.Info("Block is causing a re-organize");
+                    Log.Info("Block is causing a re-organize");
                 }
                 else
                 {
                     var splitPoint = FindSplit(newStoredBlock, _chainHead);
                     var splitPointHash = splitPoint != null ? splitPoint.Header.HashAsString : "?";
-                    _log.InfoFormat("Block forks the chain at {0}, but it did not cause a reorganize:{1}{2}",
+                    Log.InfoFormat("Block forks the chain at {0}, but it did not cause a reorganize:{1}{2}",
                                     splitPointHash, Environment.NewLine, newStoredBlock);
                 }
 
@@ -275,10 +275,10 @@ namespace CoinSharp
             // Firstly, calculate the block at which the chain diverged. We only need to examine the
             // chain from beyond this block to find differences.
             var splitPoint = FindSplit(newChainHead, _chainHead);
-            _log.InfoFormat("Re-organize after split at height {0}", splitPoint.Height);
-            _log.InfoFormat("Old chain head: {0}", _chainHead.Header.HashAsString);
-            _log.InfoFormat("New chain head: {0}", newChainHead.Header.HashAsString);
-            _log.InfoFormat("Split at block: {0}", splitPoint.Header.HashAsString);
+            Log.InfoFormat("Re-organize after split at height {0}", splitPoint.Height);
+            Log.InfoFormat("Old chain head: {0}", _chainHead.Header.HashAsString);
+            Log.InfoFormat("New chain head: {0}", newChainHead.Header.HashAsString);
+            Log.InfoFormat("Split at block: {0}", splitPoint.Header.HashAsString);
             // Then build a list of all blocks in the old part of the chain and the new part.
             var oldBlocks = GetPartialChain(_chainHead, splitPoint);
             var newBlocks = GetPartialChain(newChainHead, splitPoint);
@@ -365,7 +365,7 @@ namespace CoinSharp
                 {
                     // We don't want scripts we don't understand to break the block chain so just note that this tx was
                     // not scanned here and continue.
-                    _log.WarnFormat("Failed to parse a script: {0}", e);
+                    Log.WarnFormat("Failed to parse a script: {0}", e);
                 }
             }
         }
@@ -401,7 +401,7 @@ namespace CoinSharp
                 }
                 if (blocksConnectedThisRound > 0)
                 {
-                    _log.InfoFormat("Connected {0} floating blocks.", blocksConnectedThisRound);
+                    Log.InfoFormat("Connected {0} floating blocks.", blocksConnectedThisRound);
                 }
             } while (blocksConnectedThisRound > 0);
         }
@@ -440,7 +440,7 @@ namespace CoinSharp
                 }
                 cursor = _blockStore.Get(cursor.Header.PrevBlockHash);
             }
-            _log.DebugFormat("Difficulty transition traversal took {0}ms", Environment.TickCount - now);
+            Log.DebugFormat("Difficulty transition traversal took {0}ms", Environment.TickCount - now);
 
             var blockIntervalAgo = cursor.Header;
             var timespan = (int) (prev.TimeSeconds - blockIntervalAgo.TimeSeconds);
@@ -456,7 +456,7 @@ namespace CoinSharp
 
             if (newDifficulty.CompareTo(_params.ProofOfWorkLimit) > 0)
             {
-                _log.DebugFormat("Difficulty hit proof of work limit: {0}", newDifficulty.ToString(16));
+                Log.DebugFormat("Difficulty hit proof of work limit: {0}", newDifficulty.ToString(16));
                 newDifficulty = _params.ProofOfWorkLimit;
             }
 
@@ -526,7 +526,7 @@ namespace CoinSharp
                 {
                     // We don't want scripts we don't understand to break the block chain so just note that this tx was
                     // not scanned here and continue.
-                    _log.Warn("Failed to parse a script: " + e);
+                    Log.Warn("Failed to parse a script: " + e);
                 }
             }
         }

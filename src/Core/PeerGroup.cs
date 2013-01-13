@@ -51,7 +51,7 @@ namespace CoinSharp
     {
         private const int _defaultConnections = 4;
 
-        private static readonly ILog _log = LogManager.GetLogger(typeof (PeerGroup));
+        private static readonly ILog Log = Common.Logger.GetLoggerForDeclaringType();
 
         public const int DefaultConnectionDelayMillis = 5*1000;
         private const int _coreThreads = 1;
@@ -82,8 +82,8 @@ namespace CoinSharp
         /// <summary>
         /// Creates a PeerGroup with the given parameters and a default 5 second connection timeout.
         /// </summary>
-        public PeerGroup(IBlockStore blockStore, NetworkParameters @params, BlockChain chain)
-            : this(blockStore, @params, chain, DefaultConnectionDelayMillis)
+        public PeerGroup(IBlockStore blockStore, NetworkParameters networkParams, BlockChain chain)
+            : this(blockStore, networkParams, chain, DefaultConnectionDelayMillis)
         {
         }
 
@@ -91,10 +91,10 @@ namespace CoinSharp
         /// Creates a PeerGroup with the given parameters. The connectionDelayMillis parameter controls how long the
         /// PeerGroup will wait between attempts to connect to nodes or read from any added peer discovery sources.
         /// </summary>
-        public PeerGroup(IBlockStore blockStore, NetworkParameters @params, BlockChain chain, int connectionDelayMillis)
+        public PeerGroup(IBlockStore blockStore, NetworkParameters networkParams, BlockChain chain, int connectionDelayMillis)
         {
             _blockStore = blockStore;
-            _params = @params;
+            _params = networkParams;
             _chain = chain;
             _connectionDelayMillis = connectionDelayMillis;
 
@@ -189,7 +189,7 @@ namespace CoinSharp
                     }
                     catch (IOException e)
                     {
-                        _log.Error("failed to broadcast to " + peer, e);
+                        Log.Error("failed to broadcast to " + peer, e);
                     }
                 }
             }
@@ -253,7 +253,7 @@ namespace CoinSharp
                 catch (PeerDiscoveryException e)
                 {
                     // Will try again later.
-                    _log.Error("Failed to discover peer addresses from discovery source", e);
+                    Log.Error("Failed to discover peer addresses from discovery source", e);
                     return;
                 }
 
@@ -284,7 +284,7 @@ namespace CoinSharp
                         {
                             try
                             {
-                                _log.Info("Connecting to " + peer);
+                                Log.Info("Connecting to " + peer);
                                 peer.Connect();
                                 _peers.Add(peer);
                                 HandleNewPeer(peer);
@@ -298,17 +298,17 @@ namespace CoinSharp
                                 if (cause is SocketException)
                                 {
                                     if (((SocketException) cause).SocketErrorCode == SocketError.TimedOut)
-                                        _log.Info("Timeout talking to " + peer + ": " + cause.Message);
+                                        Log.Info("Timeout talking to " + peer + ": " + cause.Message);
                                     else
-                                        _log.Info("Could not connect to " + peer + ": " + cause.Message);
+                                        Log.Info("Could not connect to " + peer + ": " + cause.Message);
                                 }
                                 else if (cause is IOException)
                                 {
-                                    _log.Info("Error talking to " + peer + ": " + cause.Message);
+                                    Log.Info("Error talking to " + peer + ": " + cause.Message);
                                 }
                                 else
                                 {
-                                    _log.Error("Unexpected exception whilst talking to " + peer, ex);
+                                    Log.Error("Unexpected exception whilst talking to " + peer, ex);
                                 }
                             }
                             finally
@@ -336,7 +336,7 @@ namespace CoinSharp
                 catch (BlockStoreException e)
                 {
                     // Fatal error
-                    _log.Error("Block store corrupt?", e);
+                    Log.Error("Block store corrupt?", e);
                     _running = false;
                     throw new Exception(e.Message, e);
                 }
@@ -435,7 +435,7 @@ namespace CoinSharp
                 }
                 catch (IOException e)
                 {
-                    _log.Error("failed to start block chain download from " + peer, e);
+                    Log.Error("failed to start block chain download from " + peer, e);
                     return;
                 }
                 _downloadPeer = peer;

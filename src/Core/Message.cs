@@ -76,16 +76,16 @@ namespace CoinSharp
         {
         }
 
-        internal Message(NetworkParameters @params)
+        internal Message(NetworkParameters networkParams)
         {
-            Params = @params;
+            Params = networkParams;
         }
 
         /// <exception cref="ProtocolException"/>
-        internal Message(NetworkParameters @params, byte[] msg, int offset, uint protocolVersion = NetworkParameters.ProtocolVersion)
+        internal Message(NetworkParameters networkParams, byte[] msg, int offset, uint protocolVersion = NetworkParameters.ProtocolVersion)
         {
             ProtocolVersion = protocolVersion;
-            Params = @params;
+            Params = networkParams;
             Bytes = msg;
             Cursor = Offset = offset;
             Parse();

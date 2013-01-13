@@ -26,11 +26,11 @@ namespace CoinSharp.Store
         private readonly IDictionary<Sha256Hash, StoredBlock> _blockMap;
         private StoredBlock _chainHead;
 
-        public MemoryBlockStore(NetworkParameters @params)
+        public MemoryBlockStore(NetworkParameters networkParams)
         {
             _blockMap = new Dictionary<Sha256Hash, StoredBlock>();
             // Insert the genesis block.
-            var genesisHeader = @params.GenesisBlock.CloneAsHeader();
+            var genesisHeader = networkParams.GenesisBlock.CloneAsHeader();
             var storedGenesis = new StoredBlock(genesisHeader, genesisHeader.GetWork(), 0);
             Put(storedGenesis);
             SetChainHead(storedGenesis);

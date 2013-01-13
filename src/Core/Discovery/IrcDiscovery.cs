@@ -28,7 +28,7 @@ namespace CoinSharp.Discovery
     /// </summary>
     public class IrcDiscovery : IPeerDiscovery
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (IrcDiscovery));
+        private static readonly ILog Log = Common.Logger.GetLoggerForDeclaringType();
 
         private readonly string _channel;
         private readonly int _port;
@@ -183,7 +183,7 @@ namespace CoinSharp.Discovery
                 }
                 catch (AddressFormatException)
                 {
-                    _log.WarnFormat("IRC nick does not parse as base58: {0}", user);
+                    Log.WarnFormat("IRC nick does not parse as base58: {0}", user);
                     continue;
                 }
 

@@ -31,13 +31,13 @@ namespace CoinSharp
         private const ulong _maxInventoryItems = 50000;
 
         /// <exception cref="ProtocolException"/>
-        protected ListMessage(NetworkParameters @params, byte[] bytes)
-            : base(@params, bytes, 0)
+        protected ListMessage(NetworkParameters networkParams, byte[] bytes)
+            : base(networkParams, bytes, 0)
         {
         }
 
-        protected ListMessage(NetworkParameters @params)
-            : base(@params)
+        protected ListMessage(NetworkParameters networkParams)
+            : base(networkParams)
         {
             _items = new List<InventoryItem>();
         }

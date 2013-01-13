@@ -59,8 +59,8 @@ namespace CoinSharp.Test
         public void TestProofOfWork()
         {
             // This params accepts any difficulty target.
-            var @params = NetworkParameters.UnitTests();
-            var block = new Block(@params, _blockBytes);
+            var networkParams = NetworkParameters.UnitTests();
+            var block = new Block(networkParams, _blockBytes);
             block.Nonce = 12346;
             try
             {

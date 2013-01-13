@@ -22,13 +22,13 @@ namespace CoinSharp
     public class GetDataMessage : ListMessage
     {
         /// <exception cref="ProtocolException"/>
-        public GetDataMessage(NetworkParameters @params, byte[] payloadBytes)
-            : base(@params, payloadBytes)
+        public GetDataMessage(NetworkParameters networkParams, byte[] payloadBytes)
+            : base(networkParams, payloadBytes)
         {
         }
 
-        public GetDataMessage(NetworkParameters @params)
-            : base(@params)
+        public GetDataMessage(NetworkParameters networkParams)
+            : base(networkParams)
         {
         }
     }

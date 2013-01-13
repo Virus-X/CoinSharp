@@ -30,14 +30,14 @@ namespace CoinSharp
         internal IList<PeerAddress> Addresses { get; private set; }
 
         /// <exception cref="ProtocolException"/>
-        internal AddressMessage(NetworkParameters @params, byte[] payload, int offset)
-            : base(@params, payload, offset)
+        internal AddressMessage(NetworkParameters networkParams, byte[] payload, int offset)
+            : base(networkParams, payload, offset)
         {
         }
 
         /// <exception cref="ProtocolException"/>
-        internal AddressMessage(NetworkParameters @params, byte[] payload)
-            : base(@params, payload, 0)
+        internal AddressMessage(NetworkParameters networkParams, byte[] payload)
+            : base(networkParams, payload, 0)
         {
         }
 

@@ -33,7 +33,7 @@ namespace CoinSharp
     /// </remarks>
     public class Peer
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (Peer));
+        private static readonly ILog Log = Common.Logger.GetLoggerForDeclaringType();
 
         private NetworkConnection _conn;
         private readonly NetworkParameters _params;
@@ -56,9 +56,9 @@ namespace CoinSharp
         /// communication won't occur until you call Connect().
         /// </summary>
         /// <param name="bestHeight">Our current best chain height, to facilitate downloading.</param>
-        public Peer(NetworkParameters @params, PeerAddress address, uint bestHeight, BlockChain blockChain)
+        public Peer(NetworkParameters networkParams, PeerAddress address, uint bestHeight, BlockChain blockChain)
         {
-            _params = @params;
+            _params = networkParams;
             _address = address;
             _bestHeight = bestHeight;
             _blockChain = blockChain;
@@ -69,8 +69,8 @@ namespace CoinSharp
         /// Construct a peer that handles the given network connection and reads/writes from the given block chain. Note that
         /// communication won't occur until you call connect().
         /// </summary>
-        public Peer(NetworkParameters @params, PeerAddress address, BlockChain blockChain)
-            : this(@params, address, 0, blockChain)
+        public Peer(NetworkParameters networkParams, PeerAddress address, BlockChain blockChain)
+            : this(networkParams, address, 0, blockChain)
         {
         }
 
@@ -158,7 +158,7 @@ namespace CoinSharp
                     else
                     {
                         // TODO: Handle the other messages we can receive.
-                        _log.WarnFormat("Received unhandled message: {0}", m);
+                        Log.WarnFormat("Received unhandled message: {0}", m);
                     }
                 }
             }
@@ -167,7 +167,7 @@ namespace CoinSharp
                 if (!_running)
                 {
                     // This exception was expected because we are tearing down the socket as part of quitting.
-                    _log.Info("Shutting down peer loop");
+                    Log.Info("Shutting down peer loop");
                 }
                 else
                 {
@@ -183,7 +183,7 @@ namespace CoinSharp
             catch (Exception e)
             {
                 Disconnect();
-                _log.Error("unexpected exception in peer loop", e);
+                Log.Error("unexpected exception in peer loop", e);
                 throw;
             }
 
@@ -237,12 +237,12 @@ namespace CoinSharp
             catch (VerificationException e)
             {
                 // We don't want verification failures to kill the thread.
-                _log.Warn("Block verification failed", e);
+                Log.Warn("Block verification failed", e);
             }
             catch (ScriptException e)
             {
                 // We don't want script failures to kill the thread.
-                _log.Warn("Script exception", e);
+                Log.Warn("Script exception", e);
             }
         }
 
@@ -444,7 +444,7 @@ namespace CoinSharp
             //
             // So this is a complicated process but it has the advantage that we can download a chain of enormous length
             // in a relatively stateless manner and with constant/bounded memory usage.
-            _log.InfoFormat("blockChainDownload({0})", toHash);
+            Log.InfoFormat("blockChainDownload({0})", toHash);
 
             // TODO: Block locators should be abstracted out rather than special cased here.
             var blockLocator = new LinkedList<Sha256Hash>();

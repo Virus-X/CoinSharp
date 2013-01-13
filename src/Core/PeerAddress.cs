@@ -39,8 +39,8 @@ namespace CoinSharp
         /// Construct a peer address from a serialized payload.
         /// </summary>
         /// <exception cref="ProtocolException"/>
-        public PeerAddress(NetworkParameters @params, byte[] payload, int offset, uint protocolVersion)
-            : base(@params, payload, offset, protocolVersion)
+        public PeerAddress(NetworkParameters networkParams, byte[] payload, int offset, uint protocolVersion)
+            : base(networkParams, payload, offset, protocolVersion)
         {
         }
 

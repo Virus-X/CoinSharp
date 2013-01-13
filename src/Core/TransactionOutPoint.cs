@@ -43,8 +43,8 @@ namespace CoinSharp
         // It points to the connected transaction.
         internal Transaction FromTx { get; set; }
 
-        internal TransactionOutPoint(NetworkParameters @params, int index, Transaction fromTx)
-            : base(@params)
+        internal TransactionOutPoint(NetworkParameters networkParams, int index, Transaction fromTx)
+            : base(networkParams)
         {
             Index = index;
             if (fromTx != null)
@@ -63,8 +63,8 @@ namespace CoinSharp
         /// Deserializes the message. This is usually part of a transaction message.
         /// </summary>
         /// <exception cref="ProtocolException"/>
-        public TransactionOutPoint(NetworkParameters @params, byte[] payload, int offset)
-            : base(@params, payload, offset)
+        public TransactionOutPoint(NetworkParameters networkParams, byte[] payload, int offset)
+            : base(networkParams, payload, offset)
         {
         }
 

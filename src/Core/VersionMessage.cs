@@ -70,21 +70,21 @@ namespace CoinSharp
         public uint BestHeight { get; private set; }
 
         /// <exception cref="ProtocolException"/>
-        public VersionMessage(NetworkParameters @params, byte[] msg)
-            : base(@params, msg, 0)
+        public VersionMessage(NetworkParameters networkParams, byte[] msg)
+            : base(networkParams, msg, 0)
         {
         }
 
-        public VersionMessage(NetworkParameters @params, uint newBestHeight)
-            : base(@params)
+        public VersionMessage(NetworkParameters networkParams, uint newBestHeight)
+            : base(networkParams)
         {
             ClientVersion = NetworkParameters.ProtocolVersion;
             LocalServices = 0;
             Time = UnixTime.ToUnixTime(DateTime.UtcNow);
             // Note that the official client doesn't do anything with these, and finding out your own external IP address
             // is kind of tricky anyway, so we just put nonsense here for now.
-            MyAddr = new PeerAddress(IPAddress.Loopback, @params.Port, 0);
-            TheirAddr = new PeerAddress(IPAddress.Loopback, @params.Port, 0);
+            MyAddr = new PeerAddress(IPAddress.Loopback, networkParams.Port, 0);
+            TheirAddr = new PeerAddress(IPAddress.Loopback, networkParams.Port, 0);
             SubVer = "BitCoinSharp 0.3-SNAPSHOT";
             BestHeight = newBestHeight;
         }

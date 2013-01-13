@@ -29,7 +29,7 @@ namespace CoinSharp
     [Serializable]
     public class TransactionOutput : Message
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (TransactionOutput));
+        private static readonly ILog Log = Common.Logger.GetLoggerForDeclaringType();
 
         // A transaction output has some value and a script used for authenticating that the redeemer is allowed to spend
         // this output.
@@ -53,15 +53,15 @@ namespace CoinSharp
         /// Deserializes a transaction output message. This is usually part of a transaction message.
         /// </summary>
         /// <exception cref="ProtocolException"/>
-        public TransactionOutput(NetworkParameters @params, Transaction parent, byte[] payload, int offset)
-            : base(@params, payload, offset)
+        public TransactionOutput(NetworkParameters networkParams, Transaction parent, byte[] payload, int offset)
+            : base(networkParams, payload, offset)
         {
             ParentTransaction = parent;
             _availableForSpending = true;
         }
 
-        internal TransactionOutput(NetworkParameters @params, Transaction parent, ulong value, Address to)
-            : base(@params)
+        internal TransactionOutput(NetworkParameters networkParams, Transaction parent, ulong value, Address to)
+            : base(networkParams)
         {
             _value = value;
             _scriptBytes = Script.CreateOutputScript(to);
@@ -72,8 +72,8 @@ namespace CoinSharp
         /// <summary>
         /// Used only in creation of the genesis blocks and in unit tests.
         /// </summary>
-        internal TransactionOutput(NetworkParameters @params, Transaction parent, byte[] scriptBytes)
-            : base(@params)
+        internal TransactionOutput(NetworkParameters networkParams, Transaction parent, byte[] scriptBytes)
+            : base(networkParams)
         {
             _scriptBytes = scriptBytes;
             _value = Utils.ToNanoCoins(50, 0);
@@ -168,7 +168,7 @@ namespace CoinSharp
             }
             catch (ScriptException e)
             {
-                _log.ErrorFormat("Could not parse tx output script: {0}", e);
+                Log.ErrorFormat("Could not parse tx output script: {0}", e);
                 return false;
             }
         }

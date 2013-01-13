@@ -29,7 +29,7 @@ namespace CoinSharp.Store
     /// </summary>
     public class DiskBlockStore : IBlockStore
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (DiskBlockStore));
+        private static readonly ILog Log = Common.Logger.GetLoggerForDeclaringType();
 
         private FileStream _stream;
         private readonly IDictionary<Sha256Hash, StoredBlock> _blockMap;
@@ -37,9 +37,9 @@ namespace CoinSharp.Store
         private readonly NetworkParameters _params;
 
         /// <exception cref="BlockStoreException"/>
-        public DiskBlockStore(NetworkParameters @params, FileInfo file)
+        public DiskBlockStore(NetworkParameters networkParams, FileInfo file)
         {
-            _params = @params;
+            _params = networkParams;
             _blockMap = new Dictionary<Sha256Hash, StoredBlock>();
             try
             {
@@ -52,13 +52,13 @@ namespace CoinSharp.Store
             }
             catch (IOException e)
             {
-                _log.Error("failed to load block store from file", e);
-                CreateNewStore(@params, file);
+                Log.Error("failed to load block store from file", e);
+                CreateNewStore(networkParams, file);
             }
         }
 
         /// <exception cref="BlockStoreException"/>
-        private void CreateNewStore(NetworkParameters @params, FileInfo file)
+        private void CreateNewStore(NetworkParameters networkParams, FileInfo file)
         {
             // Create a new block store if the file wasn't found or anything went wrong whilst reading.
             _blockMap.Clear();
@@ -79,7 +79,7 @@ namespace CoinSharp.Store
             try
             {
                 // Set up the genesis block. When we start out fresh, it is by definition the top of the chain.
-                var genesis = @params.GenesisBlock.CloneAsHeader();
+                var genesis = networkParams.GenesisBlock.CloneAsHeader();
                 var storedGenesis = new StoredBlock(genesis, genesis.GetWork(), 0);
                 _chainHead = storedGenesis.Header.Hash;
                 _stream.Write(_chainHead.Bytes);
@@ -95,7 +95,7 @@ namespace CoinSharp.Store
         /// <exception cref="BlockStoreException"/>
         private void Load(FileInfo file)
         {
-            _log.InfoFormat("Reading block store from {0}", file);
+            Log.InfoFormat("Reading block store from {0}", file);
             using (var input = file.OpenRead())
             {
                 // Read a version byte.
@@ -114,7 +114,7 @@ namespace CoinSharp.Store
                 if (input.Read(chainHeadHash) < chainHeadHash.Length)
                     throw new BlockStoreException("Truncated block store: cannot read chain head hash");
                 _chainHead = new Sha256Hash(chainHeadHash);
-                _log.InfoFormat("Read chain head from disk: {0}", _chainHead);
+                Log.InfoFormat("Read chain head from disk: {0}", _chainHead);
                 var now = Environment.TickCount;
                 // Rest of file is raw block headers.
                 var headerBytes = new byte[Block.HeaderSize];
@@ -167,7 +167,7 @@ namespace CoinSharp.Store
                     throw new BlockStoreException(e);
                 }
                 var elapsed = Environment.TickCount - now;
-                _log.InfoFormat("Block chain read complete in {0}ms", elapsed);
+                Log.InfoFormat("Block chain read complete in {0}ms", elapsed);
             }
         }
 

@@ -37,7 +37,7 @@ namespace CoinSharp
     [Serializable]
     public class Wallet
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (Wallet));
+        private static readonly ILog Log = Common.Logger.GetLoggerForDeclaringType();
 
         // Algorithm for movement of transactions between pools. Outbound tx = us spending coins. Inbound tx = us
         // receiving coins. If a tx is both inbound and outbound (spend with change) it is considered outbound for the
@@ -139,9 +139,9 @@ namespace CoinSharp
         /// Creates a new, empty wallet with no keys and no transactions. If you want to restore a wallet from disk instead,
         /// see loadFromFile.
         /// </summary>
-        public Wallet(NetworkParameters @params)
+        public Wallet(NetworkParameters networkParams)
         {
-            _params = @params;
+            _params = networkParams;
             Keychain = new List<EcKey>();
             Unspent = new Dictionary<Sha256Hash, Transaction>();
             Spent = new Dictionary<Sha256Hash, Transaction>();
@@ -244,7 +244,7 @@ namespace CoinSharp
 
                 if (!reorg)
                 {
-                    _log.InfoFormat("Received tx{0} for {1} BTC: {2}", sideChain ? " on a side chain" : "",
+                    Log.InfoFormat("Received tx{0} for {1} BTC: {2}", sideChain ? " on a side chain" : "",
                                     Utils.BitcoinValueToFriendlyString(valueDifference), tx.HashAsString);
                 }
 
@@ -254,7 +254,7 @@ namespace CoinSharp
                 if (Pending.TryGetValue(txHash, out wtx))
                 {
                     Pending.Remove(txHash);
-                    _log.Info("  <-pending");
+                    Log.Info("  <-pending");
                     // A transaction we created appeared in a block. Probably this is a spend we broadcast that has been
                     // accepted by the network.
                     //
@@ -265,7 +265,7 @@ namespace CoinSharp
                         if (valueSentToMe.Equals(0))
                         {
                             // There were no change transactions so this tx is fully spent.
-                            _log.Info("  ->spent");
+                            Log.Info("  ->spent");
                             Debug.Assert(!Spent.ContainsKey(wtx.Hash), "TX in both pending and spent pools");
                             Spent[wtx.Hash] = wtx;
                         }
@@ -273,7 +273,7 @@ namespace CoinSharp
                         {
                             // There was change back to us, or this tx was purely a spend back to ourselves (perhaps for
                             // anonymization purposes).
-                            _log.Info("  ->unspent");
+                            Log.Info("  ->unspent");
                             Debug.Assert(!Unspent.ContainsKey(wtx.Hash), "TX in both pending and unspent pools");
                             Unspent[wtx.Hash] = wtx;
                         }
@@ -281,7 +281,7 @@ namespace CoinSharp
                     else if (sideChain)
                     {
                         // The transaction was accepted on an inactive side chain, but not yet by the best chain.
-                        _log.Info("  ->inactive");
+                        Log.Info("  ->inactive");
                         // It's OK for this to already be in the inactive pool because there can be multiple independent side
                         // chains in which it appears:
                         //
@@ -289,7 +289,7 @@ namespace CoinSharp
                         //        \-> b3
                         //        \-> b4 (at this point it's already present in 'inactive'
                         if (_inactive.ContainsKey(wtx.Hash))
-                            _log.Info("Saw a transaction be incorporated into multiple independent side chains");
+                            Log.Info("Saw a transaction be incorporated into multiple independent side chains");
                         _inactive[wtx.Hash] = wtx;
                         // Put it back into the pending pool, because 'pending' means 'waiting to be included in best chain'.
                         Pending[wtx.Hash] = wtx;
@@ -306,7 +306,7 @@ namespace CoinSharp
                     // are being shared between different wallets.
                     if (sideChain)
                     {
-                        _log.Info("  ->inactive");
+                        Log.Info("  ->inactive");
                         _inactive[tx.Hash] = tx;
                     }
                     else if (bestChain)
@@ -315,7 +315,7 @@ namespace CoinSharp
                     }
                 }
 
-                _log.InfoFormat("Balance is now: {0}", Utils.BitcoinValueToFriendlyString(GetBalance()));
+                Log.InfoFormat("Balance is now: {0}", Utils.BitcoinValueToFriendlyString(GetBalance()));
 
                 // Inform anyone interested that we have new coins. Note: we may be re-entered by the event listener,
                 // so we must not make assumptions about our state after this loop returns! For example,
@@ -343,14 +343,14 @@ namespace CoinSharp
             if (!tx.GetValueSentToMe(this).Equals(0))
             {
                 // It's sending us coins.
-                _log.Info("  new tx ->unspent");
+                Log.Info("  new tx ->unspent");
                 Debug.Assert(!Unspent.ContainsKey(tx.Hash), "TX was received twice");
                 Unspent[tx.Hash] = tx;
             }
             else
             {
                 // It spent some of our coins and did not send us any.
-                _log.Info("  new tx ->spent");
+                Log.Info("  new tx ->spent");
                 Debug.Assert(!Spent.ContainsKey(tx.Hash), "TX was received twice");
                 Spent[tx.Hash] = tx;
             }
@@ -397,8 +397,8 @@ namespace CoinSharp
                     Debug.Assert(connected != null);
                     if (Pending.Remove(connected.Hash))
                     {
-                        _log.InfoFormat("Saw double spend from chain override pending tx {0}", connected.HashAsString);
-                        _log.Info("  <-pending ->dead");
+                        Log.InfoFormat("Saw double spend from chain override pending tx {0}", connected.HashAsString);
+                        Log.Info("  <-pending ->dead");
                         _dead[connected.Hash] = connected;
                         // Now forcibly change the connection.
                         input.Connect(Unspent, true);
@@ -433,10 +433,10 @@ namespace CoinSharp
                 // There's nothing left I can spend in this transaction.
                 if (Unspent.Remove(tx.Hash))
                 {
-                    if (_log.IsInfoEnabled)
+                    if (Log.IsInfoEnabled)
                     {
-                        _log.Info("  " + context + " <-unspent");
-                        _log.Info("  " + context + " ->spent");
+                        Log.Info("  " + context + " <-unspent");
+                        Log.Info("  " + context + " ->spent");
                     }
                     Spent[tx.Hash] = tx;
                 }
@@ -484,7 +484,7 @@ namespace CoinSharp
             lock (this)
             {
                 Debug.Assert(!Pending.ContainsKey(tx.Hash), "confirmSend called on the same transaction twice");
-                _log.InfoFormat("confirmSend of {0}", tx.HashAsString);
+                Log.InfoFormat("confirmSend of {0}", tx.HashAsString);
                 // Mark the outputs of the used transactions as spent, so we don't try and spend it again.
                 foreach (var input in tx.Inputs)
                 {
@@ -624,7 +624,7 @@ namespace CoinSharp
         {
             lock (this)
             {
-                _log.Info("Creating send tx to " + address + " for " +
+                Log.Info("Creating send tx to " + address + " for " +
                           Utils.BitcoinValueToFriendlyString(nanocoins));
                 // To send money to somebody else, we need to do gather up transactions with unspent outputs until we have
                 // sufficient value. Many coin selection algorithms are possible, we use a simple but suboptimal one.
@@ -645,7 +645,7 @@ namespace CoinSharp
                 // Can we afford this?
                 if (valueGathered < nanocoins)
                 {
-                    _log.Info("Insufficient value in wallet for send, missing " +
+                    Log.Info("Insufficient value in wallet for send, missing " +
                               Utils.BitcoinValueToFriendlyString(nanocoins - valueGathered));
                     // TODO: Should throw an exception here.
                     return null;
@@ -659,7 +659,7 @@ namespace CoinSharp
                     // The value of the inputs is greater than what we want to send. Just like in real life then,
                     // we need to take back some coins ... this is called "change". Add another output that sends the change
                     // back to us.
-                    _log.Info("  with " + Utils.BitcoinValueToFriendlyString((ulong) change) + " coins change");
+                    Log.Info("  with " + Utils.BitcoinValueToFriendlyString((ulong) change) + " coins change");
                     sendTx.AddOutput(new TransactionOutput(_params, sendTx, (ulong) change, changeAddress));
                 }
                 foreach (var output in gathered)
@@ -669,7 +669,7 @@ namespace CoinSharp
 
                 // Now sign the inputs, thus proving that we are entitled to redeem the connected outputs.
                 sendTx.SignInputs(Transaction.SigHash.All, this);
-                _log.InfoFormat("  created {0}", sendTx.HashAsString);
+                Log.InfoFormat("  created {0}", sendTx.HashAsString);
                 return sendTx;
             }
         }
@@ -891,10 +891,10 @@ namespace CoinSharp
                 //
                 // receive() has been called on the block that is triggering the re-org before this is called.
 
-                _log.Info("  Old part of chain (top to bottom):");
-                foreach (var b in oldBlocks) _log.InfoFormat("    {0}", b.Header.HashAsString);
-                _log.InfoFormat("  New part of chain (top to bottom):");
-                foreach (var b in newBlocks) _log.InfoFormat("    {0}", b.Header.HashAsString);
+                Log.Info("  Old part of chain (top to bottom):");
+                foreach (var b in oldBlocks) Log.InfoFormat("    {0}", b.Header.HashAsString);
+                Log.InfoFormat("  New part of chain (top to bottom):");
+                foreach (var b in newBlocks) Log.InfoFormat("    {0}", b.Header.HashAsString);
 
                 // Transactions that appear in the old chain segment.
                 IDictionary<Sha256Hash, Transaction> oldChainTransactions = new Dictionary<Sha256Hash, Transaction>();
@@ -953,7 +953,7 @@ namespace CoinSharp
                                          Transaction rightValue;
                                          return newChainTransactions.TryGetValue(item.Key, out rightValue) && Equals(item.Value, rightValue);
                                      });
-                _log.Info(affectedUs ? "Re-org affected our transactions" : "Re-org had no effect on our transactions");
+                Log.Info(affectedUs ? "Re-org affected our transactions" : "Re-org had no effect on our transactions");
                 if (!affectedUs) return;
 
                 // For simplicity we will reprocess every transaction to ensure it's in the right bucket and has the right
@@ -962,9 +962,9 @@ namespace CoinSharp
                 // unless the user has an enormous wallet. As an optimization fully spent transactions buried deeper than
                 // 1000 blocks could be put into yet another bucket which we never touch and assume re-orgs cannot affect.
 
-                foreach (var tx in onlyOldChainTransactions.Values) _log.InfoFormat("  Only Old: {0}", tx.HashAsString);
-                foreach (var tx in oldChainTransactions.Values) _log.InfoFormat("  Old: {0}", tx.HashAsString);
-                foreach (var tx in newChainTransactions.Values) _log.InfoFormat("  New: {0}", tx.HashAsString);
+                foreach (var tx in onlyOldChainTransactions.Values) Log.InfoFormat("  Only Old: {0}", tx.HashAsString);
+                foreach (var tx in oldChainTransactions.Values) Log.InfoFormat("  Old: {0}", tx.HashAsString);
+                foreach (var tx in newChainTransactions.Values) Log.InfoFormat("  New: {0}", tx.HashAsString);
 
                 // Break all the existing connections.
                 foreach (var tx in all.Values)
@@ -990,12 +990,12 @@ namespace CoinSharp
                     }
                     if (unspentOutputs > 0)
                     {
-                        _log.InfoFormat("  TX {0}: ->unspent", tx.HashAsString);
+                        Log.InfoFormat("  TX {0}: ->unspent", tx.HashAsString);
                         Unspent[tx.Hash] = tx;
                     }
                     else
                     {
-                        _log.InfoFormat("  TX {0}: ->spent", tx.HashAsString);
+                        Log.InfoFormat("  TX {0}: ->spent", tx.HashAsString);
                         Spent[tx.Hash] = tx;
                     }
                 }
@@ -1004,14 +1004,14 @@ namespace CoinSharp
                 //   - Connect the newly active transactions.
                 foreach (var b in newBlocks.Reverse()) // Need bottom-to-top but we get top-to-bottom.
                 {
-                    _log.InfoFormat("Replaying block {0}", b.Header.HashAsString);
+                    Log.InfoFormat("Replaying block {0}", b.Header.HashAsString);
                     ICollection<Transaction> txns = new HashSet<Transaction>();
                     foreach (var tx in newChainTransactions.Values)
                     {
                         if (tx.AppearsIn.Contains(b))
                         {
                             txns.Add(tx);
-                            _log.InfoFormat("  containing tx {0}", tx.HashAsString);
+                            Log.InfoFormat("  containing tx {0}", tx.HashAsString);
                         }
                     }
                     foreach (var t in txns)
@@ -1036,7 +1036,7 @@ namespace CoinSharp
                 {
                     toReprocess[pair.Key] = pair.Value;
                 }
-                _log.Info("Reprocessing:");
+                Log.Info("Reprocessing:");
                 // Note, we must reprocess dead transactions first. The reason is that if there is a double spend across
                 // chains from our own coins we get a complicated situation:
                 //
@@ -1056,7 +1056,7 @@ namespace CoinSharp
                     ReprocessTxAfterReorg(pool, tx);
                 }
 
-                _log.InfoFormat("post-reorg balance is {0}", Utils.BitcoinValueToFriendlyString(GetBalance()));
+                Log.InfoFormat("post-reorg balance is {0}", Utils.BitcoinValueToFriendlyString(GetBalance()));
 
                 // Inform event listeners that a re-org took place.
                 if (Reorganized != null)
@@ -1073,7 +1073,7 @@ namespace CoinSharp
 
         private void ReprocessTxAfterReorg(IDictionary<Sha256Hash, Transaction> pool, Transaction tx)
         {
-            _log.InfoFormat("  TX {0}", tx.HashAsString);
+            Log.InfoFormat("  TX {0}", tx.HashAsString);
             var numInputs = tx.Inputs.Count;
             var noSuchTx = 0;
             var success = 0;
@@ -1100,7 +1100,7 @@ namespace CoinSharp
                     isDead = true;
                     // This transaction was replaced by a double spend on the new chain. Did you just reverse
                     // your own transaction? I hope not!!
-                    _log.Info("   ->dead, will not confirm now unless there's another re-org");
+                    Log.Info("   ->dead, will not confirm now unless there's another re-org");
                     var doubleSpent = input.GetConnectedOutput(pool);
                     var replacement = doubleSpent.SpentBy.ParentTransaction;
                     _dead[tx.Hash] = tx;
@@ -1120,13 +1120,13 @@ namespace CoinSharp
 
             if (noSuchTx == numInputs)
             {
-                _log.Info("   ->inactive");
+                Log.Info("   ->inactive");
                 _inactive[tx.Hash] = tx;
             }
             else if (success == numInputs - noSuchTx)
             {
                 // All inputs are either valid for spending or don't come from us. Miners are trying to re-include it.
-                _log.Info("   ->pending");
+                Log.Info("   ->pending");
                 Pending[tx.Hash] = tx;
                 _dead.Remove(tx.Hash);
             }

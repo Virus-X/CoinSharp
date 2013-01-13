@@ -46,7 +46,7 @@ namespace CoinSharp.Examples
         public static void Run(string[] args)
         {
             var testNet = args.Length > 0 && string.Equals(args[0], "testnet", StringComparison.InvariantCultureIgnoreCase);
-            var @params = testNet ? NetworkParameters.TestNet(19000) : NetworkParameters.ProdNet();
+            var networkParams = testNet ? NetworkParameters.TestNet(19000) : NetworkParameters.ProdNet();
             var filePrefix = testNet ? "pingservice-testnet" : "pingservice-prodnet";
 
             // Try to read the wallet from storage, create a new one if not possible.
@@ -58,7 +58,7 @@ namespace CoinSharp.Examples
             }
             catch (IOException)
             {
-                wallet = new Wallet(@params);
+                wallet = new Wallet(networkParams);
                 wallet.Keychain.Add(new EcKey());
                 wallet.SaveToFile(walletFile);
             }
@@ -69,13 +69,13 @@ namespace CoinSharp.Examples
 
             // Load the block chain, if there is one stored locally.
             Console.WriteLine("Reading block store from disk");
-            using (var blockStore = new BoundedOverheadBlockStore(@params, new FileInfo(filePrefix + ".blockchain")))
+            using (var blockStore = new BoundedOverheadBlockStore(networkParams, new FileInfo(filePrefix + ".blockchain")))
             {
                 // Connect to the localhost node. One minute timeout since we won't try any other peers
                 Console.WriteLine("Connecting ...");
-                var chain = new BlockChain(@params, wallet, blockStore);
+                var chain = new BlockChain(networkParams, wallet, blockStore);
 
-                var peerGroup = new PeerGroup(blockStore, @params, chain);
+                var peerGroup = new PeerGroup(blockStore, networkParams, chain);
                 peerGroup.AddAddress(new PeerAddress(IPAddress.Loopback));
                 peerGroup.Start();
 
@@ -100,7 +100,7 @@ namespace CoinSharp.Examples
                     };
 
                 peerGroup.DownloadBlockChain();
-                Console.WriteLine("Send coins to: " + key.ToAddress(@params));
+                Console.WriteLine("Send coins to: " + key.ToAddress(networkParams));
                 Console.WriteLine("Waiting for coins to arrive. Press Ctrl-C to quit.");
                 // The PeerGroup thread keeps us alive until something kills the process.
             }

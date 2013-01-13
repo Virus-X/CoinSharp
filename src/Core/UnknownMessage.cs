@@ -24,8 +24,8 @@ namespace CoinSharp
         private readonly string _name;
 
         /// <exception cref="ProtocolException"/>
-        public UnknownMessage(NetworkParameters @params, string name, byte[] payloadBytes)
-            : base(@params, payloadBytes, 0)
+        public UnknownMessage(NetworkParameters networkParams, string name, byte[] payloadBytes)
+            : base(networkParams, payloadBytes, 0)
         {
             _name = name;
         }

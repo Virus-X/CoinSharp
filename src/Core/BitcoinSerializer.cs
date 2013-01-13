@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using CoinSharp.Common;
 using CoinSharp.IO;
 using log4net;
 
@@ -37,7 +38,7 @@ namespace CoinSharp
     /// </remarks>
     public class BitcoinSerializer
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (BitcoinSerializer));
+        private static readonly ILog Log = Logger.GetLoggerForDeclaringType();
         private const int _commandLen = 12;
 
         private readonly NetworkParameters _params;
@@ -63,9 +64,9 @@ namespace CoinSharp
         /// </summary>
         /// <param name="params">MetworkParams used to create Messages instances and determining packetMagic</param>
         /// <param name="usesChecksumming">Set to true if checksums should be included and expected in headers</param>
-        public BitcoinSerializer(NetworkParameters @params, bool usesChecksumming)
+        public BitcoinSerializer(NetworkParameters networkParams, bool usesChecksumming)
         {
-            _params = @params;
+            _params = networkParams;
             _usesChecksumming = usesChecksumming;
         }
 
@@ -110,8 +111,8 @@ namespace CoinSharp
             @out.Write(header);
             @out.Write(payload);
 
-            if (_log.IsDebugEnabled)
-                _log.DebugFormat("Sending {0} message: {1}", name, Utils.BytesToHexString(header) + Utils.BytesToHexString(payload));
+            if (Log.IsDebugEnabled)
+                Log.DebugFormat("Sending {0} message: {1}", name, Utils.BytesToHexString(header) + Utils.BytesToHexString(payload));
         }
 
         /// <summary>
@@ -211,9 +212,9 @@ namespace CoinSharp
                 }
             }
 
-            if (_log.IsDebugEnabled)
+            if (Log.IsDebugEnabled)
             {
-                _log.DebugFormat("Received {0} byte '{1}' message: {2}",
+                Log.DebugFormat("Received {0} byte '{1}' message: {2}",
                                  size,
                                  command,
                                  Utils.BytesToHexString(payloadBytes)

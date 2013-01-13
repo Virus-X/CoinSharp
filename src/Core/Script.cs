@@ -34,7 +34,7 @@ namespace CoinSharp
     /// </remarks>
     public class Script
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (Script));
+        private static readonly ILog Log = Common.Logger.GetLoggerForDeclaringType();
 
         // Some constants used for decoding the scripts.
         public const int OpPushData1 = 76;
@@ -61,9 +61,9 @@ namespace CoinSharp
         /// <param name="offset">How many bytes into programBytes to start reading from.</param>
         /// <param name="length">How many bytes to read.</param>
         /// <exception cref="ScriptException"/>
-        public Script(NetworkParameters @params, byte[] programBytes, int offset, int length)
+        public Script(NetworkParameters networkParams, byte[] programBytes, int offset, int length)
         {
-            _params = @params;
+            _params = networkParams;
             Parse(programBytes, offset, length);
         }
 
@@ -185,7 +185,7 @@ namespace CoinSharp
                 else if (opcode == OpPushData4)
                 {
                     // Read a uint32, then read that many bytes of data.
-                    _log.Error("PUSHDATA4: Unimplemented");
+                    Log.Error("PUSHDATA4: Unimplemented");
                 }
                 else
                 {

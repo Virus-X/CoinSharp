@@ -29,9 +29,9 @@ namespace CoinSharp.Discovery
         private readonly NetworkParameters _params;
         private int _pnseedIndex;
 
-        public SeedPeers(NetworkParameters @params)
+        public SeedPeers(NetworkParameters networkParams)
         {
-            _params = @params;
+            _params = networkParams;
         }
 
         /// <summary>

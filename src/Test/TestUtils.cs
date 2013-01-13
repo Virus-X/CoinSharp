@@ -20,15 +20,15 @@ namespace CoinSharp.Test
 {
     public static class TestUtils
     {
-        public static Transaction CreateFakeTx(NetworkParameters @params, ulong nanocoins, Address to)
+        public static Transaction CreateFakeTx(NetworkParameters networkParams, ulong nanocoins, Address to)
         {
-            var t = new Transaction(@params);
-            var o1 = new TransactionOutput(@params, t, nanocoins, to);
+            var t = new Transaction(networkParams);
+            var o1 = new TransactionOutput(networkParams, t, nanocoins, to);
             t.AddOutput(o1);
             // Make a previous tx simply to send us sufficient coins. This prev tx is not really valid but it doesn't
             // matter for our purposes.
-            var prevTx = new Transaction(@params);
-            var prevOut = new TransactionOutput(@params, prevTx, nanocoins, to);
+            var prevTx = new Transaction(networkParams);
+            var prevOut = new TransactionOutput(networkParams, prevTx, nanocoins, to);
             prevTx.AddOutput(prevOut);
             // Connect it.
             t.AddInput(prevOut);
@@ -42,9 +42,9 @@ namespace CoinSharp.Test
         }
 
         // Emulates receiving a valid block that builds on top of the chain.
-        public static BlockPair CreateFakeBlock(NetworkParameters @params, IBlockStore blockStore, params Transaction[] transactions)
+        public static BlockPair CreateFakeBlock(NetworkParameters networkParams, IBlockStore blockStore, params Transaction[] transactions)
         {
-            var b = MakeTestBlock(@params, blockStore);
+            var b = MakeTestBlock(networkParams, blockStore);
             // Coinbase tx was already added.
             foreach (var tx in transactions)
                 b.AddTransaction(tx);
@@ -58,23 +58,23 @@ namespace CoinSharp.Test
         }
 
         /// <exception cref="BlockStoreException"/>
-        public static Block MakeTestBlock(NetworkParameters @params, IBlockStore blockStore)
+        public static Block MakeTestBlock(NetworkParameters networkParams, IBlockStore blockStore)
         {
-            return blockStore.GetChainHead().Header.CreateNextBlock(new EcKey().ToAddress(@params));
+            return blockStore.GetChainHead().Header.CreateNextBlock(new EcKey().ToAddress(networkParams));
         }
 
         /// <exception cref="BlockStoreException"/>
-        public static Block MakeSolvedTestBlock(NetworkParameters @params, IBlockStore blockStore)
+        public static Block MakeSolvedTestBlock(NetworkParameters networkParams, IBlockStore blockStore)
         {
-            var b = blockStore.GetChainHead().Header.CreateNextBlock(new EcKey().ToAddress(@params));
+            var b = blockStore.GetChainHead().Header.CreateNextBlock(new EcKey().ToAddress(networkParams));
             b.Solve();
             return b;
         }
 
         /// <exception cref="BlockStoreException"/>
-        public static Block MakeSolvedTestBlock(NetworkParameters @params, Block prev)
+        public static Block MakeSolvedTestBlock(NetworkParameters networkParams, Block prev)
         {
-            var b = prev.CreateNextBlock(new EcKey().ToAddress(@params));
+            var b = prev.CreateNextBlock(new EcKey().ToAddress(networkParams));
             b.Solve();
             return b;
         }

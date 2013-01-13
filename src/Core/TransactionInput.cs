@@ -52,11 +52,11 @@ namespace CoinSharp
         /// <summary>
         /// Used only in creation of the genesis block.
         /// </summary>
-        internal TransactionInput(NetworkParameters @params, Transaction parentTransaction, byte[] scriptBytes)
-            : base(@params)
+        internal TransactionInput(NetworkParameters networkParams, Transaction parentTransaction, byte[] scriptBytes)
+            : base(networkParams)
         {
             ScriptBytes = scriptBytes;
-            Outpoint = new TransactionOutPoint(@params, -1, null);
+            Outpoint = new TransactionOutPoint(networkParams, -1, null);
             _sequence = uint.MaxValue;
             ParentTransaction = parentTransaction;
         }
@@ -64,11 +64,11 @@ namespace CoinSharp
         /// <summary>
         /// Creates an UNSIGNED input that links to the given output
         /// </summary>
-        internal TransactionInput(NetworkParameters @params, Transaction parentTransaction, TransactionOutput output)
-            : base(@params)
+        internal TransactionInput(NetworkParameters networkParams, Transaction parentTransaction, TransactionOutput output)
+            : base(networkParams)
         {
             var outputIndex = output.Index;
-            Outpoint = new TransactionOutPoint(@params, outputIndex, output.ParentTransaction);
+            Outpoint = new TransactionOutPoint(networkParams, outputIndex, output.ParentTransaction);
             ScriptBytes = EmptyArray;
             _sequence = uint.MaxValue;
             ParentTransaction = parentTransaction;
@@ -78,8 +78,8 @@ namespace CoinSharp
         /// Deserializes an input message. This is usually part of a transaction message.
         /// </summary>
         /// <exception cref="ProtocolException"/>
-        public TransactionInput(NetworkParameters @params, Transaction parentTransaction, byte[] payload, int offset)
-            : base(@params, payload, offset)
+        public TransactionInput(NetworkParameters networkParams, Transaction parentTransaction, byte[] payload, int offset)
+            : base(networkParams, payload, offset)
         {
             ParentTransaction = parentTransaction;
         }

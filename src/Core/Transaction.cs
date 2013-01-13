@@ -45,8 +45,8 @@ namespace CoinSharp
         // This is an in memory helper only.
         [NonSerialized] private Sha256Hash _hash;
 
-        internal Transaction(NetworkParameters @params)
-            : base(@params)
+        internal Transaction(NetworkParameters networkParams)
+            : base(networkParams)
         {
             _version = 1;
             _inputs = new List<TransactionInput>();
@@ -58,8 +58,8 @@ namespace CoinSharp
         /// Creates a transaction from the given serialized bytes, eg, from a block or a tx network message.
         /// </summary>
         /// <exception cref="ProtocolException"/>
-        public Transaction(NetworkParameters @params, byte[] payloadBytes)
-            : base(@params, payloadBytes, 0)
+        public Transaction(NetworkParameters networkParams, byte[] payloadBytes)
+            : base(networkParams, payloadBytes, 0)
         {
         }
 
@@ -67,8 +67,8 @@ namespace CoinSharp
         /// Creates a transaction by reading payload starting from offset bytes in. Length of a transaction is fixed.
         /// </summary>
         /// <exception cref="ProtocolException"/>
-        public Transaction(NetworkParameters @params, byte[] payload, int offset)
-            : base(@params, payload, offset)
+        public Transaction(NetworkParameters networkParams, byte[] payload, int offset)
+            : base(networkParams, payload, offset)
         {
             // inputs/outputs will be created in parse()
         }

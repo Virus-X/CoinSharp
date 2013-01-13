@@ -39,7 +39,7 @@ namespace CoinSharp
     [Serializable]
     public class Block : Message
     {
-        private static readonly ILog _log = LogManager.GetLogger(typeof (Block));
+        private static readonly ILog Log = Common.Logger.GetLoggerForDeclaringType();
 
         /// <summary>
         /// How many bytes are required to represent a block header.
@@ -77,8 +77,8 @@ namespace CoinSharp
         /// <summary>
         /// Special case constructor, used for the genesis node, cloneAsHeader and unit tests.
         /// </summary>
-        internal Block(NetworkParameters @params)
-            : base(@params)
+        internal Block(NetworkParameters networkParams)
+            : base(networkParams)
         {
             // Set up a few basic things. We are not complete after this though.
             _version = 1;
@@ -91,8 +91,8 @@ namespace CoinSharp
         /// Constructs a block object from the BitCoin wire format.
         /// </summary>
         /// <exception cref="ProtocolException"/>
-        public Block(NetworkParameters @params, byte[] payloadBytes)
-            : base(@params, payloadBytes, 0)
+        public Block(NetworkParameters networkParams, byte[] payloadBytes)
+            : base(networkParams, payloadBytes, 0)
         {
         }
 
@@ -315,7 +315,7 @@ namespace CoinSharp
             var calculatedRoot = CalculateMerkleRoot();
             if (!calculatedRoot.Equals(_merkleRoot))
             {
-                _log.Error("Merkle tree did not verify");
+                Log.Error("Merkle tree did not verify");
                 throw new VerificationException("Merkle hashes do not match: " +
                                                 calculatedRoot + " vs " + _merkleRoot);
             }

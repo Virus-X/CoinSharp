@@ -33,12 +33,12 @@ namespace CoinSharp.Examples
             Console.WriteLine(wallet.ToString());
 
             // Set up the components and link them together.
-            var @params = NetworkParameters.TestNet();
-            using (var blockStore = new MemoryBlockStore(@params))
+            var networkParams = NetworkParameters.TestNet();
+            using (var blockStore = new MemoryBlockStore(networkParams))
             {
-                var chain = new BlockChain(@params, wallet, blockStore);
+                var chain = new BlockChain(networkParams, wallet, blockStore);
 
-                var peerGroup = new PeerGroup(blockStore, @params, chain);
+                var peerGroup = new PeerGroup(blockStore, networkParams, chain);
                 peerGroup.AddAddress(new PeerAddress(IPAddress.Loopback));
                 peerGroup.Start();
 
