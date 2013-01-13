@@ -21,11 +21,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using BitCoinSharp.Threading.AtomicTypes;
-using BitCoinSharp.Threading.Collections.Generic;
-using BitCoinSharp.Threading.Future;
+using CoinSharp.Threading.AtomicTypes;
+using CoinSharp.Threading.Collections.Generic;
+using CoinSharp.Threading.Future;
 
-namespace BitCoinSharp.Threading.Execution
+namespace CoinSharp.Threading.Execution
 {
     //TODO PHASED correct the link to BitCoinSharp.Threading.Execution.IScheduledExecutorService
     /// <summary> 
@@ -82,7 +82,7 @@ namespace BitCoinSharp.Threading.Execution
         /// <summary> 
         /// Creates a thread pool that reuses a fixed number of threads
         /// operating off a shared unbounded queue, using the provided
-        /// <see cref="BitCoinSharp.Threading.IThreadFactory"/> to create new threads when needed. 
+        /// <see cref="IThreadFactory"/> to create new threads when needed. 
         /// </summary>
         /// <remarks>
         /// At any point, at most <paramref name="threadPoolSize"/> threads will be active processing
@@ -113,7 +113,7 @@ namespace BitCoinSharp.Threading.Execution
         }
 
         /// <summary> 
-        /// Creates an <see cref="BitCoinSharp.Threading.IExecutor"/> that uses a single worker thread operating
+        /// Creates an <see cref="IExecutor"/> that uses a single worker thread operating
         /// off an unbounded queue.
         /// </summary>
         /// <remarks>
@@ -122,10 +122,10 @@ namespace BitCoinSharp.Threading.Execution
         /// shutdown, a new one will take its place if needed to execute
         /// subsequent tasks. Tasks are guaranteed to execute
         /// sequentially, and no more than one task will be active at any
-        /// given time. Unlike the otherwise equivalent <see cref="BitCoinSharp.Threading.Execution.Executors.NewFixedThreadPool(int)"/>,
+        /// given time. Unlike the otherwise equivalent <see cref="Executors.NewFixedThreadPool(int)"/>,
         /// the returned executor is guaranteed not to be reconfigurable to use additional threads.
         /// </remarks>
-        /// <returns> the newly created single-threaded <see cref="BitCoinSharp.Threading.IExecutor"/> </returns>
+        /// <returns> the newly created single-threaded <see cref="IExecutor"/> </returns>
         public static IExecutorService NewSingleThreadExecutor()
         {
             return new FinalizableDelegatedExecutorService(
@@ -133,17 +133,17 @@ namespace BitCoinSharp.Threading.Execution
         }
 
         /// <summary> 
-        /// Creates an <see cref="BitCoinSharp.Threading.IExecutor"/> that uses a single worker thread operating
-        /// off an unbounded queue, and uses the provided <see cref="BitCoinSharp.Threading.IThreadFactory"/> to
+        /// Creates an <see cref="IExecutor"/> that uses a single worker thread operating
+        /// off an unbounded queue, and uses the provided <see cref="IThreadFactory"/> to
         /// create a new thread when needed. 
         /// </summary>
         /// <remarks>
-        /// Unlike the otherwise equivalent <see cref="BitCoinSharp.Threading.Execution.Executors.NewFixedThreadPool(int, IThreadFactory)"/>, the
+        /// Unlike the otherwise equivalent <see cref="Executors.NewFixedThreadPool(int, IThreadFactory)"/>, the
         /// returned executor is guaranteed not to be reconfigurable to use
         /// additional threads.
         /// </remarks>
         /// <param name="threadFactory">the factory to use when creating new threads</param>
-        /// <returns> the newly created single-threaded <see cref="BitCoinSharp.Threading.IExecutor"/></returns>
+        /// <returns> the newly created single-threaded <see cref="IExecutor"/></returns>
         public static IExecutorService NewSingleThreadExecutor(IThreadFactory threadFactory)
         {
             return new FinalizableDelegatedExecutorService(
@@ -158,14 +158,14 @@ namespace BitCoinSharp.Threading.Execution
         /// <remarks>
         /// These pools will typically improve the performance
         /// of programs that execute many short-lived asynchronous tasks.
-        /// Calls to <see cref="BitCoinSharp.Threading.IExecutor.Execute(IRunnable)"/> will reuse previously constructed
+        /// Calls to <see cref="IExecutor.Execute(IRunnable)"/> will reuse previously constructed
         /// threads if available. If no existing thread is available, a new
         /// thread will be created and added to the pool. Threads that have
         /// not been used for sixty seconds are terminated and removed from`
         /// the cache. Thus, a pool that remains idle for long enough will
         /// not consume any resources. <b>Note:</b> pools with similar
         /// properties but different details (for example, timeout parameters)
-        /// may be created using <see cref="BitCoinSharp.Threading.Execution.ThreadPoolExecutor"/> constructors.
+        /// may be created using <see cref="ThreadPoolExecutor"/> constructors.
         /// </remarks>
         /// <returns>the newly created thread pool</returns>
         public static IExecutorService NewCachedThreadPool()
@@ -177,7 +177,7 @@ namespace BitCoinSharp.Threading.Execution
         /// <summary> 
         /// Creates a thread pool that creates new threads as needed, but
         /// will reuse previously constructed threads when they are
-        /// available, and uses the provided <see cref="BitCoinSharp.Threading.IThreadFactory"/>  to create new threads when needed.
+        /// available, and uses the provided <see cref="IThreadFactory"/>  to create new threads when needed.
         /// </summary>
         /// <param name="threadFactory">the factory to use when creating new threads</param>
         /// <returns> the newly created thread pool</returns>
@@ -189,7 +189,7 @@ namespace BitCoinSharp.Threading.Execution
 
         /// <summary> 
         /// Returns an object that delegates all defined 
-        /// <see cref="BitCoinSharp.Threading.Execution.IExecutorService"/> 
+        /// <see cref="IExecutorService"/> 
         /// methods to the given executor, but not any
         /// other methods that might otherwise be accessible using
         /// casts. 
@@ -199,7 +199,7 @@ namespace BitCoinSharp.Threading.Execution
         /// disallow tuning of a given concrete implementation.
         /// </remarks>
         /// <param name="executor">the underlying implementation</param>
-        /// <returns> an <see cref="BitCoinSharp.Threading.Execution.IExecutorService"/> instance</returns>
+        /// <returns> an <see cref="IExecutorService"/> instance</returns>
         /// <exception cref="System.ArgumentNullException">if <paramref name="executor"/> is null</exception>
         public static IExecutorService UnconfigurableExecutorService(IExecutorService executor)
         {
@@ -212,7 +212,7 @@ namespace BitCoinSharp.Threading.Execution
         /// Returns a default thread factory used to create new threads.
         /// </summary>
         /// <remarks>
-        /// This factory creates all new threads used by an <see cref="BitCoinSharp.Threading.IExecutor"/>.
+        /// This factory creates all new threads used by an <see cref="IExecutor"/>.
         /// invoking this <see cref="NewDefaultThreadFactory"/> method.
         /// New threads have names accessible via <see cref="System.Threading.Thread.Name"/> of
         /// <i>pool-N-thread-M</i>, where <i>N</i> is the sequence

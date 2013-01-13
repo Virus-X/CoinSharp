@@ -1,7 +1,7 @@
 using System;
-using BitCoinSharp.Threading.Future;
+using CoinSharp.Threading.Future;
 
-namespace BitCoinSharp.Threading.Execution
+namespace CoinSharp.Threading.Execution
 {
     /// <summary> 
     /// A service that decouples the production of new asynchronous tasks from 

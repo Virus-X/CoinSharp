@@ -16,7 +16,7 @@
 
 using System.Collections.Generic;
 
-namespace BitCoinSharp.Store
+namespace CoinSharp.Store
 {
     /// <summary>
     /// Keeps <see cref="StoredBlock"/>s in memory. Used primarily for unit testing.

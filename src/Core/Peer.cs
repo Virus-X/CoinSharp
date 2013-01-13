@@ -20,10 +20,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using BitCoinSharp.Threading;
+using CoinSharp.Threading;
 using log4net;
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     /// <summary>
     /// A Peer handles the high level communication with a BitCoin node.

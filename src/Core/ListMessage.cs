@@ -16,9 +16,9 @@
 
 using System.Collections.Generic;
 using System.IO;
-using BitCoinSharp.IO;
+using CoinSharp.IO;
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     /// <summary>
     /// Abstract super class of classes with list based payload, i.e. InventoryMessage and GetDataMessage.

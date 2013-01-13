@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-using BitCoinSharp.Store;
+using CoinSharp.Store;
 
-namespace BitCoinSharp.Test
+namespace CoinSharp.Test
 {
     public static class TestUtils
     {

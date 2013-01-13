@@ -20,7 +20,7 @@
 
 using System;
 
-namespace BitCoinSharp.Threading
+namespace CoinSharp.Threading
 {
     /// <summary>
     /// An implementation of <see cref="IRunnable"/> that restores the context

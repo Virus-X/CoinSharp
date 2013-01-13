@@ -2,7 +2,7 @@ using System;
 using System.Reflection;
 using System.Runtime.Serialization;
 
-namespace BitCoinSharp.Threading.Utility
+namespace CoinSharp.Threading.Utility
 {
     /// <summary>
     /// Collection of static methods that aid in serialization.

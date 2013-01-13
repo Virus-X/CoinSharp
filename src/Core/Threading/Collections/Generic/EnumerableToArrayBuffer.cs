@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using BitCoinSharp.Collections.Generic;
+using CoinSharp.Collections.Generic;
 
-namespace BitCoinSharp.Threading.Collections.Generic
+namespace CoinSharp.Threading.Collections.Generic
 {
     internal struct EnumerableToArrayBuffer<T>
     {

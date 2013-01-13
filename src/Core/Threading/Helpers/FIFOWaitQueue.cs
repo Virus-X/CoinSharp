@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace BitCoinSharp.Threading.Helpers
+namespace CoinSharp.Threading.Helpers
 {
     /// <summary> 
     /// Simple linked list queue used in FIFOSemaphore.

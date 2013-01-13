@@ -20,9 +20,9 @@
 
 using System;
 using System.Threading;
-using BitCoinSharp.Threading.Execution;
+using CoinSharp.Threading.Execution;
 
-namespace BitCoinSharp.Threading.Future
+namespace CoinSharp.Threading.Future
 {
     /// <summary>
     /// Enumeration representing a task execution status.
@@ -369,12 +369,12 @@ namespace BitCoinSharp.Threading.Future
         }
 
         /// <summary> 
-        /// Causes this future to report an <see cref="BitCoinSharp.Threading.Execution.ExecutionException"/> 
+        /// Causes this future to report an <see cref="ExecutionException"/> 
         /// with the given <see cref="System.Exception"/> as its cause, unless this <see cref="IFuture{T}"/> has
         /// already been set or has been cancelled.
         /// </summary>
         /// <remarks>
-        /// This method is invoked internally by the <see cref="BitCoinSharp.Threading.IRunnable"/> method
+        /// This method is invoked internally by the <see cref="IRunnable"/> method
         /// upon failure of the computation.
         /// </remarks>
         /// <param name="t">the cause of failure</param>

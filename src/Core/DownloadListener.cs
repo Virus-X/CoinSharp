@@ -16,9 +16,9 @@
 
 using System;
 using System.Threading;
-using BitCoinSharp.Common;
+using CoinSharp.Common;
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     /// <summary>
     /// Listen to chain download events and print useful informational messages.
@@ -36,7 +36,7 @@ namespace BitCoinSharp
     {
         private int _originalBlocksLeft = -1;
         private int _lastPercent;
-        private readonly Semaphore _done = new Semaphore(0, 0);
+        private readonly Semaphore _done = new Semaphore(1, 1);
 
         public override void OnChainDownloadStarted(Peer peer, int blocksLeft)
         {

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-using BitCoinSharp.Discovery;
+using CoinSharp.Discovery;
 using NUnit.Framework;
 
-namespace BitCoinSharp.Test.Discovery
+namespace CoinSharp.Test.Discovery
 {
     [TestFixture]
     public class IrcDiscoveryTest

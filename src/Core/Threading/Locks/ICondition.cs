@@ -21,7 +21,7 @@
 using System;
 using System.Threading;
 
-namespace BitCoinSharp.Threading.Locks
+namespace CoinSharp.Threading.Locks
 {
     /// <summary>
     /// <see cref="ICondition"/> factors out the <see cref="Monitor"/>

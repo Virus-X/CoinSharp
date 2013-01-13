@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-namespace BitCoinSharp.Threading
+namespace CoinSharp.Threading
 {
     internal class SynchronizedHashSet<T> : ICollection<T>
     {

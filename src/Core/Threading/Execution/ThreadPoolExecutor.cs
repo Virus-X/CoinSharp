@@ -22,12 +22,12 @@ using System;
 using System.Collections.Generic;
 using System.Security;
 using System.Threading;
-using BitCoinSharp.Threading.AtomicTypes;
-using BitCoinSharp.Threading.Collections.Generic;
-using BitCoinSharp.Threading.Future;
-using BitCoinSharp.Threading.Locks;
+using CoinSharp.Threading.AtomicTypes;
+using CoinSharp.Threading.Collections.Generic;
+using CoinSharp.Threading.Future;
+using CoinSharp.Threading.Locks;
 
-namespace BitCoinSharp.Threading.Execution
+namespace CoinSharp.Threading.Execution
 {
     /// <summary>
     /// An <see cref="IExecutorService"/> that executes each submitted task 

@@ -19,21 +19,21 @@
 #endregion
 
 using System;
-using BitCoinSharp.Threading.Execution;
+using CoinSharp.Threading.Execution;
 
-namespace BitCoinSharp.Threading
+namespace CoinSharp.Threading
 {
     /// <summary> 
-    /// An object that executes submitted <see cref="BitCoinSharp.Threading.IRunnable"/> tasks
+    /// An object that executes submitted <see cref="IRunnable"/> tasks
     /// or an <see cref="Action"/>.
     /// </summary>
     /// <remarks> 
     /// This interface provides a way of decoupling task submission from the
     /// mechanics of how each task will be run, including details of thread
-    /// use, scheduling, etc. An <see cref="BitCoinSharp.Threading.IExecutor"/> is normally used
+    /// use, scheduling, etc. An <see cref="IExecutor"/> is normally used
     /// instead of explicitly creating threads.
     /// <p/>
-    /// However, the <see cref="BitCoinSharp.Threading.IExecutor"/> interface does not strictly
+    /// However, the <see cref="IExecutor"/> interface does not strictly
     /// require that execution be asynchronous. In the simplest case, an
     /// executor can run the submitted task immediately in the caller's
     /// thread:
@@ -64,13 +64,13 @@ namespace BitCoinSharp.Threading
     /// }
     /// </code>
     /// 
-    /// Many <see cref="BitCoinSharp.Threading.IExecutor"/> implementations impose some sort of
+    /// Many <see cref="IExecutor"/> implementations impose some sort of
     /// limitation on how and when tasks are scheduled. 
     /// <p/>
-    /// The <see cref="BitCoinSharp.Threading.IExecutor"/> implementations provided in this package
-    /// implement <see cref="BitCoinSharp.Threading.Execution.IExecutorService"/>, which is a more extensive
-    /// interface. The <see cref="BitCoinSharp.Threading.Execution.ThreadPoolExecutor"/> class provides an
-    /// extensible thread pool implementation. The <see cref="BitCoinSharp.Threading.Execution.Executors"/> class
+    /// The <see cref="IExecutor"/> implementations provided in this package
+    /// implement <see cref="IExecutorService"/>, which is a more extensive
+    /// interface. The <see cref="ThreadPoolExecutor"/> class provides an
+    /// extensible thread pool implementation. The <see cref="Executors"/> class
     /// provides convenient factory methods for these Executors.
     /// </remarks>
     /// <author>Doug Lea</author>
@@ -83,7 +83,7 @@ namespace BitCoinSharp.Threading
         /// </summary>
         /// <remarks>
         /// The command may execute in a new thread, in a pooled thread, or in the calling
-        /// thread, at the discretion of the <see cref="BitCoinSharp.Threading.IExecutor"/> implementation.
+        /// thread, at the discretion of the <see cref="IExecutor"/> implementation.
         /// </remarks>
         /// <param name="command">the runnable task</param>
         /// <exception cref="RejectedExecutionException">if the task cannot be accepted for execution.</exception>

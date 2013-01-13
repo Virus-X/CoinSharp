@@ -21,7 +21,7 @@
 using System;
 using System.Threading;
 
-namespace BitCoinSharp.Threading.Helpers
+namespace CoinSharp.Threading.Helpers
 {
     /// <summary>
     /// The wait node used by implementations of <see cref="IWaitQueue"/>.

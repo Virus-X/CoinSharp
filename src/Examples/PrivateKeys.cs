@@ -17,9 +17,9 @@
 using System;
 using System.Net;
 using System.Threading;
-using BitCoinSharp.Store;
+using CoinSharp.Store;
 
-namespace BitCoinSharp.Examples
+namespace CoinSharp.Examples
 {
     /// <summary>
     /// This example shows how to solve the challenge Hal posted here:<p/>

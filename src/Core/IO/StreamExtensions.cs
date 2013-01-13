@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace BitCoinSharp.IO
+namespace CoinSharp.IO
 {
     internal static class StreamExtensions
     {

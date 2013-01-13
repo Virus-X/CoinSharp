@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace BitCoinSharp.Threading.Helpers
+namespace CoinSharp.Threading.Helpers
 {
     /// <summary>
     /// Used by <see cref="WaitNode"/>.

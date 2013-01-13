@@ -21,7 +21,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace BitCoinSharp.Threading.Helpers
+namespace CoinSharp.Threading.Helpers
 {
     /// <summary> 
     /// Interface for internal queue classes for semaphores, etc.

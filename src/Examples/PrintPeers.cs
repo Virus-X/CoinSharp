@@ -17,9 +17,9 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
-using BitCoinSharp.Discovery;
+using CoinSharp.Discovery;
 
-namespace BitCoinSharp.Examples
+namespace CoinSharp.Examples
 {
     /// <summary>
     /// Prints a list of IP addresses connected to the rendezvous point on the LFnet IRC channel.

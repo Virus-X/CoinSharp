@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using BitCoinSharp.Collections.Generic;
-using BitCoinSharp.Threading.Collections.Generic;
+using CoinSharp.Collections.Generic;
+using CoinSharp.Threading.Collections.Generic;
 
-namespace BitCoinSharp.Threading
+namespace CoinSharp.Threading
 {
     /// <summary>
     /// Static class to provide extension methods to basic system function.

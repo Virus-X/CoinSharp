@@ -21,7 +21,7 @@
 using System;
 using System.Threading;
 
-namespace BitCoinSharp.Threading
+namespace CoinSharp.Threading
 {
     /// <summary> 
     /// A synchronization aid that allows one or more threads to wait until

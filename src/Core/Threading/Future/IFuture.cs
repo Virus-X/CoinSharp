@@ -19,9 +19,9 @@
 #endregion
 
 using System;
-using BitCoinSharp.Threading.Execution;
+using CoinSharp.Threading.Execution;
 
-namespace BitCoinSharp.Threading.Future
+namespace CoinSharp.Threading.Future
 {
     /// <summary>
     /// A <see cref="IFuture{T}"/> represents the result of an asynchronous
@@ -83,7 +83,7 @@ namespace BitCoinSharp.Threading.Future
     /// </para>
     /// </remarks>
     /// <seealso cref="FutureTask{T}"/>
-    /// <seealso cref="BitCoinSharp.Threading.IExecutor"/>
+    /// <seealso cref="IExecutor"/>
     /// <author>Doug Lea</author>
     /// <author>Griffin Caprio (.NET)</author>
     /// <author>Kenneth Xu</author>

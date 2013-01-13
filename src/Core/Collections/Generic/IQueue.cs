@@ -22,11 +22,11 @@
 
 using System;
 using System.Collections.Generic;
-using BitCoinSharp.Threading.Collections.Generic;
+using CoinSharp.Threading.Collections.Generic;
 
 #endregion
 
-namespace BitCoinSharp.Collections.Generic
+namespace CoinSharp.Collections.Generic
 {
     /// <summary>
     /// A collection designed for holding elements prior to processing.

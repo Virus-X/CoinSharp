@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BitCoinSharp.Examples
+namespace CoinSharp.Examples
 {
     public static class Program
     {
         public static void Main(string[] args)
-        {
+        {            
             if (args == null || args.Length == 0)
             {
                 Console.WriteLine("BitCoinSharp.Examples <name> <args>");

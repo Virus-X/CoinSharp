@@ -21,7 +21,7 @@
 using System;
 using System.Threading;
 
-namespace BitCoinSharp.Threading.Locks
+namespace CoinSharp.Threading.Locks
 {
     //TODO PHASED correct the link to <see cref="T:BitCoinSharp.Threading.Locks.IReadWriteLock"/>
     /// <summary> 

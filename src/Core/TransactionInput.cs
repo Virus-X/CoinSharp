@@ -18,9 +18,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using BitCoinSharp.IO;
+using CoinSharp.IO;
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     /// <summary>
     /// A transfer of coins from one address to another creates a transaction in which the outputs

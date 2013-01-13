@@ -17,9 +17,9 @@
 using System;
 using System.IO;
 using System.Net;
-using BitCoinSharp.Store;
+using CoinSharp.Store;
 
-namespace BitCoinSharp.Examples
+namespace CoinSharp.Examples
 {
     /// <summary>
     /// RefreshWallet loads a wallet, then processes the block chain to update the transaction pools within it.

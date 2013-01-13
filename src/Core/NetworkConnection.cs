@@ -18,10 +18,10 @@ using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using BitCoinSharp.Common;
+using CoinSharp.Common;
 using log4net;
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     /// <summary>
     /// A NetworkConnection handles talking to a remote BitCoin peer at a low level. It understands how to read and write

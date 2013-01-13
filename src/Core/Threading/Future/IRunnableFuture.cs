@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace BitCoinSharp.Threading.Future
+namespace CoinSharp.Threading.Future
 {
     /// <summary> 
     /// A <see cref="IFuture{T}"/> that is a <see cref="IRunnable"/>. 

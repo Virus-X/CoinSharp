@@ -23,9 +23,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 using System.Threading;
-using BitCoinSharp.Threading.Helpers;
+using CoinSharp.Threading.Helpers;
 
-namespace BitCoinSharp.Threading.Locks
+namespace CoinSharp.Threading.Locks
 {
     /// <summary> 
     /// A reentrant mutual exclusion <see cref="ILock"/> with the same basic
@@ -607,7 +607,7 @@ namespace BitCoinSharp.Threading.Locks
             get { return _sync.QueueLength; }
         }
 
-        /// <summary> Creates an instance of <see cref="BitCoinSharp.Threading.Locks.ReentrantLock"/>.
+        /// <summary> Creates an instance of <see cref="ReentrantLock"/>.
         /// This is equivalent to using <tt>ReentrantLock(false)</tt>.
         /// </summary>
         public ReentrantLock() : this(false)
@@ -615,7 +615,7 @@ namespace BitCoinSharp.Threading.Locks
         }
 
         /// <summary> 
-        ///    Creates an instance of <see cref="BitCoinSharp.Threading.Locks.ReentrantLock"/> with the
+        ///    Creates an instance of <see cref="ReentrantLock"/> with the
         /// given fairness policy.
         /// </summary>
         /// <param name="fair"><c>true</c> if this lock will be fair, else <c>false</c>
@@ -820,13 +820,13 @@ namespace BitCoinSharp.Threading.Locks
         /// Acquires the lock if it is not held by another thread and
         /// returns immediately with the value <c>true</c>, setting the
         /// lock hold count to one. Even when this lock has been set to use a
-        /// fair ordering policy, a call to <see cref="BitCoinSharp.Threading.Locks.ReentrantLock.TryLock()"/> <b>will</b>
+        /// fair ordering policy, a call to <see cref="ReentrantLock.TryLock()"/> <b>will</b>
         /// immediately acquire the lock if it is available, whether or not
         /// other threads are currently waiting for the lock.
         /// This &quot;barging&quot; behavior can be useful in certain
         /// circumstances, even though it breaks fairness. If you want to honor
         /// the fairness setting for this lock, then use
-        /// <see cref="BitCoinSharp.Threading.Locks.ReentrantLock.TryLock(TimeSpan)"/>
+        /// <see cref="ReentrantLock.TryLock(TimeSpan)"/>
         /// which is almost equivalent (it also detects interruption).
         /// 
         /// <p/> 
@@ -857,8 +857,8 @@ namespace BitCoinSharp.Threading.Locks
         /// immediately with the value <c>true</c>, setting the lock hold count
         /// to one. If this lock has been set to use a fair ordering policy then
         /// an available lock <b>will not</b> be acquired if any other threads
-        /// are waiting for the lock. This is in contrast to the <see cref="BitCoinSharp.Threading.Locks.ReentrantLock.TryLock()"/> 
-        /// method. If you want a timed <see cref="BitCoinSharp.Threading.Locks.ReentrantLock.TryLock()"/> that does permit barging on
+        /// are waiting for the lock. This is in contrast to the <see cref="ReentrantLock.TryLock()"/> 
+        /// method. If you want a timed <see cref="ReentrantLock.TryLock()"/> that does permit barging on
         /// a fair lock then combine the timed and un-timed forms together:
         /// 
         /// <code>
@@ -935,20 +935,20 @@ namespace BitCoinSharp.Threading.Locks
         }
 
         /// <summary> 
-        /// Returns a <see cref="BitCoinSharp.Threading.Locks.ICondition"/> instance for use with this
-        /// <see cref="BitCoinSharp.Threading.Locks.ILock"/> instance.
+        /// Returns a <see cref="ICondition"/> instance for use with this
+        /// <see cref="ILock"/> instance.
         /// 
         /// <p/>
-        /// The returned <see cref="BitCoinSharp.Threading.Locks.ICondition"/> instance supports the same
+        /// The returned <see cref="ICondition"/> instance supports the same
         /// usages as do the <see cref="System.Threading.Monitor"/> methods <see cref="System.Threading.Monitor.Wait(object)"/>,
         /// <see cref="System.Threading.Monitor.Pulse(object)"/>, and <see cref="System.Threading.Monitor.PulseAll(object)"/>) when used with the built-in
         /// monitor lock.
         /// <list type="bullet">
         /// <item>
         /// If this lock is not held when either 
-        /// <see cref="BitCoinSharp.Threading.Locks.ICondition.Await()"/> or <see cref="BitCoinSharp.Threading.Locks.ICondition.Signal()"/>
+        /// <see cref="ICondition.Await()"/> or <see cref="ICondition.Signal()"/>
         /// methods are called, then an <see cref="System.InvalidOperationException"/>  is thrown.</item>
-        /// <item>When the condition <see cref="BitCoinSharp.Threading.Locks.ICondition"/>await() waiting}
+        /// <item>When the condition <see cref="ICondition"/>await() waiting}
         /// methods are called the lock is released and, before they
         /// return, the lock is reacquired and the lock hold count restored
         /// to what it was when the method was called.</item>

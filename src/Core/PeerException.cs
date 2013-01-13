@@ -16,7 +16,7 @@
 
 using System;
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     /// <summary>
     /// Thrown when a problem occurs in communicating with a peer, and we should

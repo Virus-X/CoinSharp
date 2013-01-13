@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 
-[assembly: AssemblyTitle("BitCoinSharp")]
+[assembly: AssemblyTitle("CoinSharp")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
@@ -38,4 +38,4 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion("0.2.199.60")]
 [assembly: AssemblyFileVersion("0.2.199.60")]
-[assembly: InternalsVisibleTo("BitCoinSharp.Test")]
+[assembly: InternalsVisibleTo("CoinSharp.Test")]

@@ -23,7 +23,7 @@ using System.Threading;
 
 #pragma warning disable 420
 
-namespace BitCoinSharp.Threading.AtomicTypes
+namespace CoinSharp.Threading.AtomicTypes
 {
     /// <summary> 
     /// An <see cref="int"/> value that may be updated atomically.

@@ -1,4 +1,4 @@
-﻿namespace BitCoinSharp.Threading.Execution
+﻿namespace CoinSharp.Threading.Execution
 {
     internal interface IRecommendParallelism // NET_ONLY
     {

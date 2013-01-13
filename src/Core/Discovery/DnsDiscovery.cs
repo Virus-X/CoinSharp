@@ -19,7 +19,7 @@ using System.Collections.Generic;
 using System.Net;
 using log4net;
 
-namespace BitCoinSharp.Discovery
+namespace CoinSharp.Discovery
 {
     /// <summary>
     /// Supports peer discovery through DNS.

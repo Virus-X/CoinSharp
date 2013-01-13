@@ -1,4 +1,4 @@
-namespace BitCoinSharp.Threading.Execution
+namespace CoinSharp.Threading.Execution
 {
     /// <summary> 
     /// A handler for tasks that cannot be executed by a 

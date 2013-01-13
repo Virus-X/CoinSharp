@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace BitCoinSharp.Threading
+namespace CoinSharp.Threading
 {
     /// <summary>
     /// A context carrier factory creates instances of 

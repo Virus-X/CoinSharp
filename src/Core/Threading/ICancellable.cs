@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace BitCoinSharp.Threading
+namespace CoinSharp.Threading
 {
     /// <summary>
     /// A task that can be canceled.

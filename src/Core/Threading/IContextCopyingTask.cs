@@ -1,4 +1,4 @@
-namespace BitCoinSharp.Threading
+namespace CoinSharp.Threading
 {
     /// <summary>
     /// A marker interface to indicate the task copies the context.

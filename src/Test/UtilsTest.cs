@@ -17,7 +17,7 @@
 using System;
 using NUnit.Framework;
 
-namespace BitCoinSharp.Test
+namespace CoinSharp.Test
 {
     [TestFixture]
     public class UtilsTest

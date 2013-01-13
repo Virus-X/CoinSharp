@@ -19,10 +19,10 @@
 #endregion
 
 using System;
-using BitCoinSharp.Threading.Collections.Generic;
-using BitCoinSharp.Threading.Future;
+using CoinSharp.Threading.Collections.Generic;
+using CoinSharp.Threading.Future;
 
-namespace BitCoinSharp.Threading.Execution
+namespace CoinSharp.Threading.Execution
 {
     /// <summary> 
     /// A <see cref="ICompletionService{T}"/> that uses a supplied <see cref="IExecutor"/>

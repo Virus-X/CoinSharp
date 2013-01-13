@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BitCoinSharp.Threading.Utility
+namespace CoinSharp.Threading.Utility
 {
     internal static class WaitTime
     {

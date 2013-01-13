@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace BitCoinSharp.Threading
+namespace CoinSharp.Threading
 {
     /// <summary>
     /// A never instantiable class that can be used as generic type parameter

@@ -18,10 +18,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using BitCoinSharp.IO;
+using CoinSharp.IO;
 using log4net;
 
-namespace BitCoinSharp.Store
+namespace CoinSharp.Store
 {
     /// <summary>
     /// Stores the block chain to disk but still holds it in memory. This is intended for desktop apps and tests.

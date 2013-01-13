@@ -16,7 +16,7 @@
 
 using System;
 
-namespace BitCoinSharp.Store
+namespace CoinSharp.Store
 {
     /// <summary>
     /// An implementor of BlockStore saves StoredBlock objects to disk. Different implementations store them in

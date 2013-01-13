@@ -19,9 +19,9 @@
 #endregion
 
 using System.Threading;
-using BitCoinSharp.Threading.Execution;
+using CoinSharp.Threading.Execution;
 
-namespace BitCoinSharp.Threading
+namespace CoinSharp.Threading
 {
     /// <summary> 
     /// An object that creates new threads on demand. 

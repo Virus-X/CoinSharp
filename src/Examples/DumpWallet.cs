@@ -17,7 +17,7 @@
 using System;
 using System.IO;
 
-namespace BitCoinSharp.Examples
+namespace CoinSharp.Examples
 {
     /// <summary>
     /// DumpWallet loads a serialized wallet and prints information about what it contains.

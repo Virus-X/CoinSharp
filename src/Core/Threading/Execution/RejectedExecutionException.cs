@@ -1,10 +1,10 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace BitCoinSharp.Threading.Execution
+namespace CoinSharp.Threading.Execution
 {
     /// <summary> 
-    /// Exception thrown by an <see cref="BitCoinSharp.Threading.IExecutor"/> when a task cannot be
+    /// Exception thrown by an <see cref="IExecutor"/> when a task cannot be
     /// accepted for execution.
     /// </summary>
     /// <author>Doug Lea</author>
@@ -13,14 +13,14 @@ namespace BitCoinSharp.Threading.Execution
     internal class RejectedExecutionException : SystemException //JDK_1_6
     {
         /// <summary> 
-        /// Constructs a <see cref="BitCoinSharp.Threading.Execution.RejectedExecutionException"/> with no detail message.
+        /// Constructs a <see cref="RejectedExecutionException"/> with no detail message.
         /// </summary>
         public RejectedExecutionException()
         {
         }
 
         /// <summary> 
-        /// Constructs a <see cref="BitCoinSharp.Threading.Execution.RejectedExecutionException"/> with the
+        /// Constructs a <see cref="RejectedExecutionException"/> with the
         /// specified detail message.
         /// </summary>
         /// <param name="message">the detail message</param>
@@ -29,7 +29,7 @@ namespace BitCoinSharp.Threading.Execution
         }
 
         /// <summary> 
-        /// Constructs a <see cref="BitCoinSharp.Threading.Execution.RejectedExecutionException"/> with the
+        /// Constructs a <see cref="RejectedExecutionException"/> with the
         /// specified detail message and cause.
         /// </summary>
         /// <param name="message">the detail message</param>
@@ -39,7 +39,7 @@ namespace BitCoinSharp.Threading.Execution
         }
 
         /// <summary> 
-        /// Constructs a <see cref="BitCoinSharp.Threading.Execution.RejectedExecutionException"/> with the
+        /// Constructs a <see cref="RejectedExecutionException"/> with the
         /// specified cause.
         /// </summary>
         /// <param name="innerException">the cause (which is saved for later retrieval by the)</param>
@@ -48,7 +48,7 @@ namespace BitCoinSharp.Threading.Execution
         }
 
         /// <summary>
-        /// Creates a new instance of the <see cref="BitCoinSharp.Threading.Execution.RejectedExecutionException"/> class.
+        /// Creates a new instance of the <see cref="RejectedExecutionException"/> class.
         /// </summary>
         /// <param name="info">
         /// The <see cref="System.Runtime.Serialization.SerializationInfo"/>

@@ -23,11 +23,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using BitCoinSharp.Collections.Generic;
+using CoinSharp.Collections.Generic;
 
 #endregion
 
-namespace BitCoinSharp.Threading.Collections.Generic
+namespace CoinSharp.Threading.Collections.Generic
 {
     /// <summary> 
     /// A <see cref="IQueue{T}"/> that additionally supports operations

@@ -19,12 +19,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using BitCoinSharp.Common;
-using BitCoinSharp.IO;
+using CoinSharp.IO;
+using CoinSharp.Common;
 using Org.BouncyCastle.Math;
 using log4net;
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     /// <summary>
     /// A block is the foundation of the BitCoin system. It records a set of <see cref="Transaction"/>s together with

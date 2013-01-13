@@ -18,9 +18,9 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using BitCoinSharp.Store;
+using CoinSharp.Store;
 
-namespace BitCoinSharp.Examples
+namespace CoinSharp.Examples
 {
     /// <summary>
     /// PingService demonstrates basic usage of the library. It sits on the network and when it receives coins, simply
@@ -46,7 +46,7 @@ namespace BitCoinSharp.Examples
         public static void Run(string[] args)
         {
             var testNet = args.Length > 0 && string.Equals(args[0], "testnet", StringComparison.InvariantCultureIgnoreCase);
-            var @params = testNet ? NetworkParameters.TestNet() : NetworkParameters.ProdNet();
+            var @params = testNet ? NetworkParameters.TestNet(19000) : NetworkParameters.ProdNet();
             var filePrefix = testNet ? "pingservice-testnet" : "pingservice-prodnet";
 
             // Try to read the wallet from storage, create a new one if not possible.

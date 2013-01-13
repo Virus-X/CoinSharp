@@ -16,10 +16,10 @@
 
 using System;
 using System.IO;
-using BitCoinSharp.Store;
+using CoinSharp.Store;
 using NUnit.Framework;
 
-namespace BitCoinSharp.Test.Store
+namespace CoinSharp.Test.Store
 {
     [TestFixture]
     public class DiskBlockStoreTest

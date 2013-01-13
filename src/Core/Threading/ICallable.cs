@@ -19,9 +19,9 @@
 #endregion
 
 using System;
-using BitCoinSharp.Threading.Execution;
+using CoinSharp.Threading.Execution;
 
-namespace BitCoinSharp.Threading
+namespace CoinSharp.Threading
 {
     /// <summary> 
     /// A task that returns a result and may throw an exception.

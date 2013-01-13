@@ -15,13 +15,13 @@
  */
 
 using System;
-using BitCoinSharp.Common;
-using BitCoinSharp.Store;
+using CoinSharp.Common;
+using CoinSharp.Store;
 using NUnit.Framework;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Utilities.Encoders;
 
-namespace BitCoinSharp.Test
+namespace CoinSharp.Test
 {
     [TestFixture]
     public class BlockChainTest

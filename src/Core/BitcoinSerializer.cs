@@ -18,10 +18,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-using BitCoinSharp.IO;
+using CoinSharp.IO;
 using log4net;
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     /// <summary>
     /// Methods to serialize and de-serialize messages to the BitCoin network format as defined in the BitCoin protocol

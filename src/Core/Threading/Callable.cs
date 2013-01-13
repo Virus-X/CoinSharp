@@ -20,7 +20,7 @@
 
 using System;
 
-namespace BitCoinSharp.Threading
+namespace CoinSharp.Threading
 {
     /// <summary>
     /// A class converts <see cref="Func{TResult}"/> delegate to 

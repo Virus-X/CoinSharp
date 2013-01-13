@@ -19,7 +19,7 @@ using System.Text;
 using NUnit.Framework;
 using Org.BouncyCastle.Math;
 
-namespace BitCoinSharp.Test
+namespace CoinSharp.Test
 {
     [TestFixture]
     public class Base58Test

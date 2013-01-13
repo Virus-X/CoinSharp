@@ -17,9 +17,9 @@
 using System;
 using System.Net;
 using System.Threading;
-using BitCoinSharp.Store;
+using CoinSharp.Store;
 
-namespace BitCoinSharp.Examples
+namespace CoinSharp.Examples
 {
     /// <summary>
     /// Downloads the block given a block hash from the localhost node and prints it out.

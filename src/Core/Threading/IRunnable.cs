@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace BitCoinSharp.Threading
+namespace CoinSharp.Threading
 {
     /// <summary>
     /// Interface for executables. It is the same of java Runnable.

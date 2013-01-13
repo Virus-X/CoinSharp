@@ -17,9 +17,9 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using BitCoinSharp.IO;
+using CoinSharp.IO;
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     // TODO: Fold this class into the TransactionInput class. It's not necessary.
 

@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace BitCoinSharp.Threading
+namespace CoinSharp.Threading
 {
     /// <summary>
     /// Context carrier captures the context of one running thread and stores 

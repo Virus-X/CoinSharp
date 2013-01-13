@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-using BitCoinSharp.Store;
+using CoinSharp.Store;
 using NUnit.Framework;
 
-namespace BitCoinSharp.Test
+namespace CoinSharp.Test
 {
     [TestFixture]
     public class PeerGroupTest

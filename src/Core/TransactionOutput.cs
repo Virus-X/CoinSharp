@@ -17,10 +17,10 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using BitCoinSharp.IO;
+using CoinSharp.IO;
 using log4net;
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     /// <summary>
     /// A TransactionOutput message contains a scriptPubKey that controls who is able to spend its value. It is a sub-part

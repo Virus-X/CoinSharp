@@ -24,11 +24,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using BitCoinSharp.Collections.Generic;
+using CoinSharp.Collections.Generic;
 
 #endregion
 
-namespace BitCoinSharp.Threading.Collections.Generic
+namespace CoinSharp.Threading.Collections.Generic
 {
     /// <summary> 
     /// This class provides skeletal implementations of some

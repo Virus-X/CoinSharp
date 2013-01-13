@@ -1,6 +1,6 @@
 using System;
 
-namespace BitCoinSharp.Threading.Collections.Generic
+namespace CoinSharp.Threading.Collections.Generic
 {
     /// <summary>
     /// Exception to indicate a queue is already broken.

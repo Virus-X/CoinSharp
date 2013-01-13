@@ -17,12 +17,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using BitCoinSharp.Store;
-using BitCoinSharp.Test.Moq;
+using CoinSharp.Test.Moq;
+using CoinSharp.Store;
 using Moq;
 using NUnit.Framework;
 
-namespace BitCoinSharp.Test
+namespace CoinSharp.Test
 {
     [TestFixture]
     public class PeerTest

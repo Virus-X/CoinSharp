@@ -18,7 +18,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     /// <summary>
     /// In BitCoin the following format is often used to represent some type of key:<p/>

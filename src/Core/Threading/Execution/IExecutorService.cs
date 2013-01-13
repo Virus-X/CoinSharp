@@ -20,17 +20,17 @@
 
 using System;
 using System.Collections.Generic;
-using BitCoinSharp.Threading.Future;
+using CoinSharp.Threading.Future;
 
-namespace BitCoinSharp.Threading.Execution
+namespace CoinSharp.Threading.Execution
 {
     /// <summary> 
-    /// An <see cref="BitCoinSharp.Threading.IExecutor"/> that provides methods to manage termination and
+    /// An <see cref="IExecutor"/> that provides methods to manage termination and
     /// methods that can produce a <see cref="IFuture{T}"/> for tracking progress of
     /// one or more asynchronous tasks.
     /// </summary>
     /// <remarks>
-    /// An <see cref="BitCoinSharp.Threading.Execution.IExecutorService"/> can be shut down, which will cause it
+    /// An <see cref="IExecutorService"/> can be shut down, which will cause it
     /// to stop accepting new tasks. After being shut down, the executor
     /// will eventually terminate, at which point no tasks are actively
     /// executing, no tasks are awaiting execution, and no new tasks can be
@@ -38,16 +38,16 @@ namespace BitCoinSharp.Threading.Execution
     /// 
     /// <p/> 
     /// Method <see cref="Submit{T}(ICallable{T})"/> extends base method 
-    /// <see cref="BitCoinSharp.Threading.IExecutor.Execute(IRunnable)"/> by creating and returning a <see cref="IFuture{T}"/> that
+    /// <see cref="IExecutor.Execute(IRunnable)"/> by creating and returning a <see cref="IFuture{T}"/> that
     /// can be used to cancel execution and/or wait for completion.
-    /// Methods <see cref="InvokeAny{T}(System.Collections.Generic.IEnumerable{BitCoinSharp.Threading.ICallable{T}})"/> and <see cref="InvokeAll{T}(System.Collections.Generic.IEnumerable{BitCoinSharp.Threading.ICallable{T}})"/>
+    /// Methods <see cref="InvokeAny{T}(System.Collections.Generic.IEnumerable{ICallable{T}})"/> and <see cref="InvokeAll{T}(System.Collections.Generic.IEnumerable{ICallable{T}})"/>
     /// perform the most commonly useful forms of bulk execution, executing a collection of
     /// tasks and then waiting for at least one, or all, to
     /// complete. (Class <see cref="ExecutorCompletionService{T}"/> can be used to
     /// write customized variants of these methods.)
     /// 
     /// <p/>
-    /// The <see cref="BitCoinSharp.Threading.Execution.Executors"/> class provides factory methods for the
+    /// The <see cref="Executors"/> class provides factory methods for the
     /// executor services provided in this package.
     /// </remarks>
     /// <author>Doug Lea</author>
@@ -68,8 +68,8 @@ namespace BitCoinSharp.Threading.Execution
         /// </summary>
         /// <remarks>
         /// Note that this will never return <c>true</c> unless
-        /// either <see cref="BitCoinSharp.Threading.Execution.IExecutorService.Shutdown()"/> or 
-        /// <see cref="BitCoinSharp.Threading.Execution.IExecutorService.ShutdownNow()"/> was called first.
+        /// either <see cref="IExecutorService.Shutdown()"/> or 
+        /// <see cref="IExecutorService.ShutdownNow()"/> was called first.
         /// </remarks>
         /// <returns> <c>true</c> if all tasks have completed following shut down
         /// </returns>
@@ -111,7 +111,7 @@ namespace BitCoinSharp.Threading.Execution
 
         /// <summary> 
         /// Submits a Runnable task for execution and returns a Future
-        /// representing that task. The Future's <see cref="BitCoinSharp.Threading.Future.IFuture{T}.GetResult()"/> method will
+        /// representing that task. The Future's <see cref="IFuture{T}.GetResult()"/> method will
         /// return <c>null</c> upon successful completion.
         /// </summary>
         /// <param name="runnable">the task to submit

@@ -21,15 +21,15 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using BitCoinSharp.Discovery;
-using BitCoinSharp.Store;
-using BitCoinSharp.Threading;
-using BitCoinSharp.Threading.AtomicTypes;
-using BitCoinSharp.Threading.Collections.Generic;
-using BitCoinSharp.Threading.Execution;
+using CoinSharp.Discovery;
+using CoinSharp.Store;
+using CoinSharp.Threading;
+using CoinSharp.Threading.AtomicTypes;
+using CoinSharp.Threading.Collections.Generic;
+using CoinSharp.Threading.Execution;
 using log4net;
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     /// <summary>
     /// Maintain a number of connections to peers.

@@ -18,7 +18,7 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     /// <summary>
     /// A Message is a data structure that can be serialized/deserialized using both the BitCoin proprietary serialization

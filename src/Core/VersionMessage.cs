@@ -18,10 +18,10 @@ using System;
 using System.IO;
 using System.Net;
 using System.Text;
-using BitCoinSharp.Common;
-using BitCoinSharp.IO;
+using CoinSharp.IO;
+using CoinSharp.Common;
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     [Serializable]
     public class VersionMessage : Message

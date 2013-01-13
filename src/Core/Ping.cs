@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     public class Ping : Message
     {

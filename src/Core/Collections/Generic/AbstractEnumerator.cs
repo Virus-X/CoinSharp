@@ -26,7 +26,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace BitCoinSharp.Collections.Generic
+namespace CoinSharp.Collections.Generic
 {
     /// <summary>
     /// Serve as base class to be inherited by the classes that needs to

@@ -20,9 +20,9 @@
 
 using System;
 using System.Runtime.Serialization;
-using BitCoinSharp.Threading.Future;
+using CoinSharp.Threading.Future;
 
-namespace BitCoinSharp.Threading.Execution
+namespace CoinSharp.Threading.Execution
 {
     /// <summary> 
     /// Exception thrown when attempting to retrieve the result of a task
@@ -34,18 +34,18 @@ namespace BitCoinSharp.Threading.Execution
     [Serializable]
     internal class ExecutionException : Exception //JDK_1_6
     {
-        /// <summary> Constructs a <see cref="BitCoinSharp.Threading.Execution.ExecutionException"/> with no detail message.</summary>
+        /// <summary> Constructs a <see cref="ExecutionException"/> with no detail message.</summary>
         public ExecutionException()
         {
         }
 
-        /// <summary> Constructs a <see cref="BitCoinSharp.Threading.Execution.ExecutionException"/> with the specified detail message.</summary>
+        /// <summary> Constructs a <see cref="ExecutionException"/> with the specified detail message.</summary>
         /// <param name="message">the detail message</param>
         public ExecutionException(String message) : base(message)
         {
         }
 
-        /// <summary> Constructs a <see cref="BitCoinSharp.Threading.Execution.ExecutionException"/> with the specified detail message and cause.</summary>
+        /// <summary> Constructs a <see cref="ExecutionException"/> with the specified detail message and cause.</summary>
         /// <param name="message">the detail message</param>
         /// <param name="cause">the cause (which is saved for later retrieval by the</param>
         public ExecutionException(String message, Exception cause) : base(message, cause)
@@ -53,7 +53,7 @@ namespace BitCoinSharp.Threading.Execution
         }
 
         /// <summary> 
-        /// Constructs a <see cref="BitCoinSharp.Threading.Execution.ExecutionException"/> with the specified cause.
+        /// Constructs a <see cref="ExecutionException"/> with the specified cause.
         /// </summary>
         /// <param name="rootCause">The root exception that is being wrapped.</param>
         public ExecutionException(Exception rootCause) : base(rootCause.Message, rootCause)
@@ -61,7 +61,7 @@ namespace BitCoinSharp.Threading.Execution
         }
 
         /// <summary>
-        /// Creates a new instance of the <see cref="BitCoinSharp.Threading.Execution.ExecutionException"/> class.
+        /// Creates a new instance of the <see cref="ExecutionException"/> class.
         /// </summary>
         /// <param name="info">
         /// The <see cref="System.Runtime.Serialization.SerializationInfo"/>

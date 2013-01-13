@@ -16,12 +16,12 @@
 
 using System.Diagnostics;
 using System.IO;
-using BitCoinSharp.Collections.Generic;
-using BitCoinSharp.IO;
+using CoinSharp.Collections.Generic;
+using CoinSharp.IO;
 using Org.BouncyCastle.Math;
 using log4net;
 
-namespace BitCoinSharp.Store
+namespace CoinSharp.Store
 {
     /// <summary>
     /// Stores the block chain to disk.

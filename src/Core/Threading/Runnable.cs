@@ -20,7 +20,7 @@
 
 using System;
 
-namespace BitCoinSharp.Threading
+namespace CoinSharp.Threading
 {
     /// <summary>
     /// Class to convert <see cref="Action"/> to <see cref="IRunnable"/>.

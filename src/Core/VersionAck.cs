@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     /// <summary>
     /// The verack message, sent by a client accepting the version message they received from their peer.

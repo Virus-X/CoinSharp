@@ -25,7 +25,7 @@ using System.Collections.Generic;
 
 #endregion
 
-namespace BitCoinSharp.Collections.Generic
+namespace CoinSharp.Collections.Generic
 {
     /// <summary> 
     /// This class provides skeletal implementations for some of <see cref="IQueue{T}"/>

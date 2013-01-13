@@ -17,11 +17,11 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using BitCoinSharp.IO;
+using CoinSharp.IO;
 using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Utilities.Encoders;
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     /// <summary>
     /// NetworkParameters contains the data needed for working with an instantiation of a BitCoin chain.
@@ -108,9 +108,9 @@ namespace BitCoinSharp
             return genesisBlock;
         }
 
-        private const int _targetTimespan = 14*24*60*60; // 2 weeks per difficulty cycle, on average.
-        private const int _targetSpacing = 10*60; // 10 minutes per block.
-        private const int _interval = _targetTimespan/_targetSpacing;
+        private const int _targetTimespan = 14 * 24 * 60 * 60; // 2 weeks per difficulty cycle, on average.
+        private const int _targetSpacing = 10 * 60; // 10 minutes per block.
+        private const int _interval = _targetTimespan / _targetSpacing;
 
         /// <summary>
         /// Sets up the given NetworkParameters with testnet values.
@@ -142,6 +142,16 @@ namespace BitCoinSharp
         {
             var n = new NetworkParameters();
             return CreateTestNet(n);
+        }
+
+        /// <summary>
+        /// The test chain created by Gavin.
+        /// </summary>
+        public static NetworkParameters TestNet(int port)
+        {
+            var tn = CreateTestNet(new NetworkParameters());
+            tn.Port = port;
+            return tn;
         }
 
         /// <summary>

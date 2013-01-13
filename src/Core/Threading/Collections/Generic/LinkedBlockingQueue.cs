@@ -22,10 +22,10 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Threading;
-using BitCoinSharp.Collections.Generic;
-using BitCoinSharp.Threading.Utility;
+using CoinSharp.Collections.Generic;
+using CoinSharp.Threading.Utility;
 
-namespace BitCoinSharp.Threading.Collections.Generic
+namespace CoinSharp.Threading.Collections.Generic
 {
     /// <summary> 
     /// An optionally-bounded <see cref="IBlockingQueue{T}"/> based on

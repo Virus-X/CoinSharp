@@ -19,9 +19,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
-using BitCoinSharp.IO;
+using CoinSharp.IO;
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     /// <summary>
     /// A transaction represents the movement of coins from some addresses to some other addresses. It can also represent

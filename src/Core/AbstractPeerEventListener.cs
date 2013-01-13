@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     /// <summary>
     /// Convenience abstract class for implementing a PeerEventListener.

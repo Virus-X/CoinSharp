@@ -1,8 +1,8 @@
 using System;
 using System.Runtime.Serialization;
-using BitCoinSharp.Threading.Future;
+using CoinSharp.Threading.Future;
 
-namespace BitCoinSharp.Threading.Execution
+namespace CoinSharp.Threading.Execution
 {
     /// <summary> 
     /// Exception indicating that the result of a value-producing task,
@@ -16,13 +16,13 @@ namespace BitCoinSharp.Threading.Execution
     {
         #region Constructor (s) / Destructor
 
-        /// <summary>Creates a new instance of the <see cref="BitCoinSharp.Threading.Execution.CancellationException"/> class.</summary>.
+        /// <summary>Creates a new instance of the <see cref="CancellationException"/> class.</summary>.
         public CancellationException()
         {
         }
 
         /// <summary>
-        /// Creates a new instance of the <see cref="BitCoinSharp.Threading.Execution.CancellationException"/> class. with the specified message.
+        /// Creates a new instance of the <see cref="CancellationException"/> class. with the specified message.
         /// </summary>
         /// <param name="message">A message about the exception.</param>
         public CancellationException(string message) : base(message)
@@ -30,7 +30,7 @@ namespace BitCoinSharp.Threading.Execution
         }
 
         /// <summary>
-        /// Creates a new instance of the <see cref="BitCoinSharp.Threading.Execution.CancellationException"/> class with the specified message
+        /// Creates a new instance of the <see cref="CancellationException"/> class with the specified message
         /// and root cause.
         /// </summary>
         /// <param name="message">A message about the exception.</param>
@@ -41,7 +41,7 @@ namespace BitCoinSharp.Threading.Execution
         }
 
         /// <summary>
-        /// Creates a new instance of the <see cref="BitCoinSharp.Threading.Execution.CancellationException"/> class.
+        /// Creates a new instance of the <see cref="CancellationException"/> class.
         /// </summary>
         /// <param name="info">
         /// The <see cref="System.Runtime.Serialization.SerializationInfo"/>

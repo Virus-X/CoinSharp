@@ -17,11 +17,11 @@
 using System;
 using System.IO;
 using System.Net;
-using BitCoinSharp.Common;
-using BitCoinSharp.IO;
+using CoinSharp.IO;
+using CoinSharp.Common;
 using Org.BouncyCastle.Math;
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     /// <summary>
     /// A PeerAddress holds an IP address and port number representing the network location of

@@ -22,7 +22,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace BitCoinSharp.Threading.Locks
+namespace CoinSharp.Threading.Locks
 {
     /// <author>Doug Lea</author>
     /// <author>Griffin Caprio (.NET)</author>

@@ -18,7 +18,7 @@
 
 #endregion
 
-namespace BitCoinSharp.Threading.AtomicTypes
+namespace CoinSharp.Threading.AtomicTypes
 {
     /// <summary>
     /// Provide atomic access to an instance of <typeparamref name="T"/>.

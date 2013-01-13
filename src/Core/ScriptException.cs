@@ -16,7 +16,7 @@
 
 using System;
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     [Serializable]
     public class ScriptException : Exception

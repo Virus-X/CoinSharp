@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     /// <summary>
     /// Implementing a PeerEventListener allows you to learn when significant Peer communication

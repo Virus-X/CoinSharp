@@ -16,7 +16,7 @@
 
 using System;
 
-namespace BitCoinSharp
+namespace CoinSharp
 {
     /// <summary>
     /// A BitCoin address is fundamentally derived from an elliptic curve public key and a set of network parameters.

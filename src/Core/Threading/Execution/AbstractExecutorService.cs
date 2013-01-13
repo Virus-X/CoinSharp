@@ -22,20 +22,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
-using BitCoinSharp.Threading.Future;
+using CoinSharp.Threading.Future;
 
-namespace BitCoinSharp.Threading.Execution
+namespace CoinSharp.Threading.Execution
 {
     /// <summary> 
-    /// Provides default implementations of <see cref="BitCoinSharp.Threading.Execution.IExecutorService"/>
+    /// Provides default implementations of <see cref="IExecutorService"/>
     /// execution methods. 
     /// </summary>
     /// <remarks> 
-    /// This class implements the <see cref="BitCoinSharp.Threading.Execution.IExecutorService"/> methods using a
+    /// This class implements the <see cref="IExecutorService"/> methods using a
     /// <see cref="IRunnableFuture{T}"/> returned by NewTaskFor
     /// , which defaults to the <see cref="FutureTask{T}"/> class provided in this package. 
     /// <p/>
-    /// For example, the implementation of <see cref="BitCoinSharp.Threading.Execution.IExecutorService.Submit(IRunnable)"/> creates an
+    /// For example, the implementation of <see cref="IExecutorService.Submit(IRunnable)"/> creates an
     /// associated <see cref="IRunnableFuture{T}"/> that is executed and
     /// returned. Subclasses may override the NewTaskFor methods
     /// to return <see cref="IRunnableFuture{T}"/> implementations other than
@@ -44,7 +44,7 @@ namespace BitCoinSharp.Threading.Execution
     /// <p/> 
     /// <b>Extension example</b>. 
     /// Here is a sketch of a class
-    /// that customizes <see cref="BitCoinSharp.Threading.Execution.ThreadPoolExecutor"/> to use
+    /// that customizes <see cref="ThreadPoolExecutor"/> to use
     /// a custom Task class instead of the default <see cref="FutureTask{T}"/>:
     /// <code>
     /// internal class CustomThreadPoolExecutor : ThreadPoolExecutor {
@@ -150,8 +150,8 @@ namespace BitCoinSharp.Threading.Execution
         /// </summary>
         /// <remarks>
         /// Note that this will never return <c>true</c> unless
-        /// either <see cref="BitCoinSharp.Threading.Execution.IExecutorService.Shutdown()"/> or 
-        /// <see cref="BitCoinSharp.Threading.Execution.IExecutorService.ShutdownNow()"/> was called first.
+        /// either <see cref="IExecutorService.Shutdown()"/> or 
+        /// <see cref="IExecutorService.ShutdownNow()"/> was called first.
         /// </remarks>
         /// <returns> <c>true</c> if all tasks have completed following shut down
         /// </returns>
@@ -193,7 +193,7 @@ namespace BitCoinSharp.Threading.Execution
         /// </summary>
         /// <remarks>
         /// The command may execute in a new thread, in a pooled thread, or in the calling
-        /// thread, at the discretion of the <see cref="BitCoinSharp.Threading.IExecutor"/> implementation.
+        /// thread, at the discretion of the <see cref="IExecutor"/> implementation.
         /// </remarks>
         /// <param name="runnable">the runnable task</param>
         /// <exception cref="RejectedExecutionException">if the task cannot be accepted for execution.</exception>
