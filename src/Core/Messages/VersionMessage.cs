@@ -112,7 +112,7 @@ namespace CoinSharp
         /// <exception cref="IOException"/>
         public override void BitcoinSerializeToStream(Stream buf)
         {
-            Utils.Uint32ToByteStreamLe(ClientVersion, buf);
+            buf.WriteLittleEndian(ClientVersion);
             Utils.Uint64ToByteStreamLe(LocalServices, buf);
             Utils.Uint64ToByteStreamLe(Time, buf);
             // My address.
@@ -128,7 +128,7 @@ namespace CoinSharp
             buf.Write(new VarInt((ulong) subVerBytes.Length).Encode());
             buf.Write(subVerBytes);
             // Size of known block chain.
-            Utils.Uint32ToByteStreamLe(BestHeight, buf);
+            buf.WriteLittleEndian(BestHeight);
         }
 
         /// <summary>

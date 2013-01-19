@@ -90,9 +90,9 @@ namespace CoinSharp
                 {
                     // ASN1_SEQUENCE(EC_PRIVATEKEY) = {
                     //   ASN1_SIMPLE(EC_PRIVATEKEY, version, LONG),
-                    //   ASN1_SIMPLE(EC_PRIVATEKEY, privateKey, ASN1_OCTET_STRING),
+                    //   ASN1_SIMPLE(EC_PRIVATEKEY, privateKey, ASN1_OCTET_string),
                     //   ASN1_EXP_OPT(EC_PRIVATEKEY, parameters, ECPKPARAMETERS, 0),
-                    //   ASN1_EXP_OPT(EC_PRIVATEKEY, publicKey, ASN1_BIT_STRING, 1)
+                    //   ASN1_EXP_OPT(EC_PRIVATEKEY, publicKey, ASN1_BIT_string, 1)
                     // } ASN1_SEQUENCE_END(EC_PRIVATEKEY)
                     var seq = new DerSequenceGenerator(encoder);
                     seq.AddObject(new DerInteger(1)); // version
@@ -220,9 +220,9 @@ namespace CoinSharp
             //
             // ASN1_SEQUENCE(EC_PRIVATEKEY) = {
             //   ASN1_SIMPLE(EC_PRIVATEKEY, version, LONG),
-            //   ASN1_SIMPLE(EC_PRIVATEKEY, privateKey, ASN1_OCTET_STRING),
+            //   ASN1_SIMPLE(EC_PRIVATEKEY, privateKey, ASN1_OCTET_string),
             //   ASN1_EXP_OPT(EC_PRIVATEKEY, parameters, ECPKPARAMETERS, 0),
-            //   ASN1_EXP_OPT(EC_PRIVATEKEY, publicKey, ASN1_BIT_STRING, 1)
+            //   ASN1_EXP_OPT(EC_PRIVATEKEY, publicKey, ASN1_BIT_string, 1)
             // } ASN1_SEQUENCE_END(EC_PRIVATEKEY)
             //
             DerOctetString key;
@@ -257,7 +257,7 @@ namespace CoinSharp
         /// Exports the private key in the form used by the Satoshi client "dumpprivkey" and "importprivkey" commands. Use
         /// the <see cref="DumpedPrivateKey.ToString"/> method to get the string.
         /// </summary>
-        /// <param name="params">The network this key is intended for use on.</param>
+        /// <param name="networkParams">The network this key is intended for use on.</param>
         /// <returns>Private key bytes as a <see cref="DumpedPrivateKey"/>.</returns>
         public DumpedPrivateKey GetPrivateKeyEncoded(NetworkParameters networkParams)
         {

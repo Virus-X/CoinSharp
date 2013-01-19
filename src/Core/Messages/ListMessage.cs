@@ -96,7 +96,7 @@ namespace CoinSharp
             foreach (var i in _items)
             {
                 // Write out the type code.
-                Utils.Uint32ToByteStreamLe((uint) i.Type, stream);
+                stream.WriteLittleEndian((uint) i.Type);
                 // And now the hash.
                 stream.Write(Utils.ReverseBytes(i.Hash.Bytes));
             }

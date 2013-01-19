@@ -178,7 +178,7 @@ namespace CoinSharp
         /// </summary>
         public override string ToString()
         {
-            return "TxOut of " + Utils.BitcoinValueToFriendlyString(_value) + " to " + ScriptPubKey.ToAddress +
+            return "TxOut of " + Utils.BitcoinValueToFriendlystring(_value) + " to " + ScriptPubKey.ToAddress +
                    " script:" + ScriptPubKey;
         }
 

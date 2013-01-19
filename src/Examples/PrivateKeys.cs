@@ -68,7 +68,7 @@ namespace CoinSharp.Examples
                     peerGroup.Stop();
 
                     // And take them!
-                    Console.WriteLine("Claiming " + Utils.BitcoinValueToFriendlyString(wallet.GetBalance()) + " coins");
+                    Console.WriteLine("Claiming " + Utils.BitcoinValueToFriendlystring(wallet.GetBalance()) + " coins");
                     wallet.SendCoins(peerGroup, destination, wallet.GetBalance());
                     // Wait a few seconds to let the packets flush out to the network (ugly).
                     Thread.Sleep(5000);

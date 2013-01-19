@@ -57,12 +57,17 @@ namespace CoinSharp
             _names.Add(typeof (Ping), "ping");
             _names.Add(typeof (VersionAck), "verack");
             _names.Add(typeof (GetBlocksMessage), "getblocks");
+
+            //names.put(Pong.class, "pong");
+            //names.put(GetHeadersMessage.class, "getheaders");
+            //names.put(GetAddrMessage.class, "getaddr");
+            //names.put(HeadersMessage.class, "headers");
         }
 
         /// <summary>
         /// Constructs a BitcoinSerializer with the given behavior.
         /// </summary>
-        /// <param name="params">MetworkParams used to create Messages instances and determining packetMagic</param>
+        /// <param name="networkParams">MetworkParams used to create Messages instances and determining packetMagic</param>
         /// <param name="usesChecksumming">Set to true if checksums should be included and expected in headers</param>
         public BitcoinSerializer(NetworkParameters networkParams, bool usesChecksumming)
         {
@@ -271,12 +276,12 @@ namespace CoinSharp
         }
 
         /// <exception cref="IOException"/>
-        private void SeekPastMagicBytes(Stream @in)
+        private void SeekPastMagicBytes(Stream stream)
         {
             var magicCursor = 3; // Which byte of the magic we're looking for currently.
             while (true)
             {
-                var b = @in.Read(); // Read a byte.
+                var b = stream.ReadByte();
                 if (b == -1)
                 {
                     // There's no more data to read.

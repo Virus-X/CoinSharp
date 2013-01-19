@@ -183,7 +183,7 @@ namespace CoinSharp.Store
                     }
                 }
                 _channel = file.Create(); // Create fresh.
-                _channel.Write(_fileFormatVersion);
+                _channel.WriteByte(_fileFormatVersion);
             }
             catch (IOException e1)
             {
@@ -218,7 +218,7 @@ namespace CoinSharp.Store
             try
             {
                 // Read a version byte.
-                var version = _channel.Read();
+                var version = _channel.ReadByte();
                 if (version == -1)
                 {
                     // No such file or the file was empty.

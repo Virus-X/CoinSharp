@@ -26,7 +26,7 @@ namespace CoinSharp.Test
         private static readonly NetworkParameters _prodParams = NetworkParameters.ProdNet();
 
         [Test]
-        public void TestStringification()
+        public void Teststringification()
         {
             // Test a testnet address.
             var a = new Address(_testParams, Hex.Decode("fda79a24e50ff70ff42f7d89585da5bd19d9e5cc"));

@@ -91,7 +91,7 @@ namespace CoinSharp.Examples
                         var input = e.Tx.Inputs[0];
                         var from = input.FromAddress;
                         var value = e.Tx.GetValueSentToMe(wallet);
-                        Console.WriteLine("Received " + Utils.BitcoinValueToFriendlyString(value) + " from " + from);
+                        Console.WriteLine("Received " + Utils.BitcoinValueToFriendlystring(value) + " from " + from);
                         // Now send the coins back!
                         var sendTx = wallet.SendCoins(peerGroup, from, value);
                         Debug.Assert(sendTx != null); // We should never try to send more coins than we have!
@@ -102,6 +102,7 @@ namespace CoinSharp.Examples
                 peerGroup.DownloadBlockChain();
                 Console.WriteLine("Send coins to: " + key.ToAddress(networkParams));
                 Console.WriteLine("Waiting for coins to arrive. Press Ctrl-C to quit.");
+                Console.ReadLine();
                 // The PeerGroup thread keeps us alive until something kills the process.
             }
         }

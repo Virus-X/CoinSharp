@@ -15,6 +15,7 @@
  */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,14 +24,16 @@ using System.Net.Sockets;
 using System.Threading;
 using CoinSharp.Discovery;
 using CoinSharp.Store;
-using CoinSharp.Threading;
-using CoinSharp.Threading.AtomicTypes;
-using CoinSharp.Threading.Collections.Generic;
-using CoinSharp.Threading.Execution;
+using CoinSharp.Util;
 using log4net;
 
 namespace CoinSharp
 {
+    // TODO 
+    // 1. Use Timer for checking 
+    //
+
+
     /// <summary>
     /// Maintain a number of connections to peers.
     /// </summary>
@@ -49,62 +52,68 @@ namespace CoinSharp
     /// </remarks>
     public class PeerGroup
     {
-        private const int _defaultConnections = 4;
+        private const int MaxPeerConnections = 4;
+
+        private const int PeerGroupTimerInterval = 10000;
 
         private static readonly ILog Log = Common.Logger.GetLoggerForDeclaringType();
 
-        public const int DefaultConnectionDelayMillis = 5*1000;
-        private const int _coreThreads = 1;
-        private const int _threadKeepAliveSeconds = 1;
+        /// <summary>
+        /// Addresses to try to connect to, excluding active peers
+        /// </summary>
+        private readonly ConcurrentQueue<PeerAddress> _inactives;
 
-        // Addresses to try to connect to, excluding active peers
-        private readonly IBlockingQueue<PeerAddress> _inactives;
-        // Connection initiation thread
-        private Thread _connectThread;
-        // True if the connection initiation thread should be running
-        private bool _running;
-        // A pool of threads for peers, of size maxConnection
-        private readonly ThreadPoolExecutor _peerPool;
-        // Currently active peers
-        private readonly ICollection<Peer> _peers;
-        // The peer we are currently downloading the chain from
-        private Peer _downloadPeer;
-        // Callback for events related to chain download
-        private IPeerEventListener _downloadListener;
-        // Peer discovery sources, will be polled occasionally if there aren't enough in-actives.
-        private readonly ICollection<IPeerDiscovery> _peerDiscoverers;
+        private readonly IThreadWorkerPool peerConnectionPool;
 
-        private readonly NetworkParameters _params;
-        private readonly IBlockStore _blockStore;
-        private readonly BlockChain _chain;
-        private readonly int _connectionDelayMillis;
+        private readonly SingleEntryTimer peerGroupTimer;
+
+        private readonly object syncRoot = new object();
 
         /// <summary>
-        /// Creates a PeerGroup with the given parameters and a default 5 second connection timeout.
+        /// True if the connection initiation thread should be running
         /// </summary>
-        public PeerGroup(IBlockStore blockStore, NetworkParameters networkParams, BlockChain chain)
-            : this(blockStore, networkParams, chain, DefaultConnectionDelayMillis)
-        {
-        }
+        private bool _running;
+
+        /// <summary>
+        /// Currently active peers
+        /// </summary>
+        private readonly ICollection<Peer> _peers;
+
+        /// <summary>
+        /// The peer we are currently downloading the chain from
+        /// </summary>
+        private Peer _downloadPeer;
+
+        /// <summary>
+        /// Callback for events related to chain download
+        /// </summary>
+        private IPeerEventListener _downloadListener;
+
+        /// <summary>
+        /// Peer discovery sources, will be polled occasionally if there aren't enough in-actives.
+        /// </summary>
+        private readonly ICollection<IPeerDiscovery> _peerDiscoverers;
+
+        private readonly NetworkParameters networkParams;
+        private readonly IBlockStore _blockStore;
+        private readonly BlockChain _chain;
 
         /// <summary>
         /// Creates a PeerGroup with the given parameters. The connectionDelayMillis parameter controls how long the
         /// PeerGroup will wait between attempts to connect to nodes or read from any added peer discovery sources.
         /// </summary>
-        public PeerGroup(IBlockStore blockStore, NetworkParameters networkParams, BlockChain chain, int connectionDelayMillis)
+        public PeerGroup(IBlockStore blockStore, NetworkParameters networkNetworkParams, BlockChain chain)
         {
             _blockStore = blockStore;
-            _params = networkParams;
+            this.networkParams = networkNetworkParams;
             _chain = chain;
-            _connectionDelayMillis = connectionDelayMillis;
 
-            _inactives = new LinkedBlockingQueue<PeerAddress>();
-            _peers = new SynchronizedHashSet<Peer>();
-            _peerDiscoverers = new SynchronizedHashSet<IPeerDiscovery>();
-            _peerPool = new ThreadPoolExecutor(_coreThreads, _defaultConnections,
-                                               TimeSpan.FromSeconds(_threadKeepAliveSeconds),
-                                               new LinkedBlockingQueue<IRunnable>(1),
-                                               new PeerGroupThreadFactory());
+            peerConnectionPool = new ThreadWorkerPool(MaxPeerConnections);
+
+            _inactives = new ConcurrentQueue<PeerAddress>();
+            _peers = new List<Peer>();
+            _peerDiscoverers = new List<IPeerDiscovery>();
+            peerGroupTimer = new SingleEntryTimer(PeerGroupTimerCallback);
         }
 
         /// <summary>
@@ -118,21 +127,12 @@ namespace CoinSharp
         public event EventHandler<PeerDisconnectedEventArgs> PeerDisconnected;
 
         /// <summary>
-        /// Depending on the environment, this should normally be between 1 and 10, default is 4.
-        /// </summary>
-        public int MaxConnections
-        {
-            get { return _peerPool.MaximumPoolSize; }
-            set { _peerPool.MaximumPoolSize = value; }
-        }
-
-        /// <summary>
         /// Add an address to the list of potential peers to connect to.
         /// </summary>
         public void AddAddress(PeerAddress peerAddress)
         {
             // TODO(miron) consider de-duplication
-            _inactives.Add(peerAddress);
+            _inactives.Enqueue(peerAddress);
         }
 
         /// <summary>
@@ -148,9 +148,11 @@ namespace CoinSharp
         /// </summary>
         public void Start()
         {
-            _connectThread = new Thread(Run) {Name = "Peer group thread"};
-            _running = true;
-            _connectThread.Start();
+            lock (syncRoot)
+            {
+                _running = true;
+                peerGroupTimer.Change(0, PeerGroupTimerInterval);
+            }
         }
 
         /// <summary>
@@ -162,11 +164,12 @@ namespace CoinSharp
         /// </remarks>
         public void Stop()
         {
-            lock (this)
+            lock (syncRoot)
             {
                 if (_running)
                 {
-                    _connectThread.Interrupt();
+                    _running = false;
+                    peerGroupTimer.Change(Timeout.Infinite, Timeout.Infinite);
                 }
             }
         }
@@ -205,39 +208,25 @@ namespace CoinSharp
         /// we will ask the executor to shutdown and ask each peer to disconnect. At that point
         /// no threads or network connections will be active.
         /// </remarks>
-        public void Run()
+        public void PeerGroupTimerCallback(object state)
         {
             try
             {
-                while (_running)
+                if (peerConnectionPool.IsFull)
                 {
-                    if (_inactives.Count == 0)
-                    {
-                        DiscoverPeers();
-                    }
-                    else
-                    {
-                        TryNextPeer();
-                    }
+                    return;
+                }
 
-                    // We started a new peer connection, delay before trying another one
-                    Thread.Sleep(_connectionDelayMillis);
-                }
-            }
-            catch (ThreadInterruptedException)
-            {
-                lock (this)
+                if (_inactives.Count == 0)
                 {
-                    _running = false;
+                    DiscoverPeers();
                 }
+
+                AllocateNextPeer();
             }
-            _peerPool.ShutdownNow();
-            lock (_peers)
+            catch (Exception ex)
             {
-                foreach (var peer in _peers)
-                {
-                    peer.Disconnect();
-                }
+                Log.ErrorFormat("Unhandled exception in PeerGroupTimer", ex);
             }
         }
 
@@ -254,12 +243,12 @@ namespace CoinSharp
                 {
                     // Will try again later.
                     Log.Error("Failed to discover peer addresses from discovery source", e);
-                    return;
+                    continue;
                 }
 
                 foreach (var address in addresses)
                 {
-                    _inactives.Add(new PeerAddress((IPEndPoint) address));
+                    _inactives.Enqueue(new PeerAddress((IPEndPoint)address));
                 }
 
                 if (_inactives.Count > 0) break;
@@ -271,79 +260,72 @@ namespace CoinSharp
         /// again.
         /// </summary>
         /// <exception cref="ThreadInterruptedException"/>
-        private void TryNextPeer()
+        private void AllocateNextPeer()
         {
-            var address = _inactives.Take();
-            while (true)
+            PeerAddress address;
+            if (!_inactives.TryDequeue(out address))
             {
-                try
-                {
-                    var peer = new Peer(_params, address, _blockStore.GetChainHead().Height, _chain);
-                    _peerPool.Execute(
-                        () =>
-                        {
-                            try
-                            {
-                                Log.Info("Connecting to " + peer);
-                                peer.Connect();
-                                _peers.Add(peer);
-                                HandleNewPeer(peer);
-                                peer.Run();
-                            }
-                            catch (PeerException ex)
-                            {
-                                // Do not propagate PeerException - log and try next peer. Suppress stack traces for
-                                // exceptions we expect as part of normal network behaviour.
-                                var cause = ex.InnerException;
-                                if (cause is SocketException)
-                                {
-                                    if (((SocketException) cause).SocketErrorCode == SocketError.TimedOut)
-                                        Log.Info("Timeout talking to " + peer + ": " + cause.Message);
-                                    else
-                                        Log.Info("Could not connect to " + peer + ": " + cause.Message);
-                                }
-                                else if (cause is IOException)
-                                {
-                                    Log.Info("Error talking to " + peer + ": " + cause.Message);
-                                }
-                                else
-                                {
-                                    Log.Error("Unexpected exception whilst talking to " + peer, ex);
-                                }
-                            }
-                            finally
-                            {
-                                // In all cases, disconnect and put the address back on the queue.
-                                // We will retry this peer after all other peers have been tried.
-                                peer.Disconnect();
+                return;
+            }
 
-                                _inactives.Add(address);
-                                if (_peers.Remove(peer))
-                                    HandlePeerDeath(peer);
-                            }
-                        });
-                    break;
-                }
-                catch (RejectedExecutionException)
-                {
-                    // Reached maxConnections, try again after a delay
+            try
+            {
+                var peer = new Peer(networkParams, address, _blockStore.GetChainHead().Height, _chain);
+                var workerAllocated = peerConnectionPool.TryAllocateWorker(token => ConnectAndRun(peer, token));
 
-                    // TODO - consider being smarter about retry. No need to retry
-                    // if we reached maxConnections or if peer queue is empty. Also consider
-                    // exponential backoff on peers and adjusting the sleep time according to the
-                    // lowest backoff value in queue.
-                }
-                catch (BlockStoreException e)
+                if (!workerAllocated)
                 {
-                    // Fatal error
-                    Log.Error("Block store corrupt?", e);
-                    _running = false;
-                    throw new Exception(e.Message, e);
+                    _inactives.Enqueue(address);
+                    return;
                 }
+            }
+            catch (BlockStoreException e)
+            {
+                // Fatal error
+                Log.Error("Block store corrupt?", e);
+                _running = false;
+                throw new Exception(e.Message, e);
+            }
+        }
 
-                // If we got here, we should retry this address because an error unrelated
-                // to the peer has occurred.
-                Thread.Sleep(_connectionDelayMillis);
+        private void ConnectAndRun(Peer peer, CancellationToken token)
+        {
+            try
+            {
+                Log.Info("Connecting to " + peer);
+                peer.Connect();
+                HandleNewPeer(peer);
+                peer.Run(token);
+            }
+            catch (PeerException ex)
+            {
+                // Do not propagate PeerException - log and try next peer. Suppress stack traces for
+                // exceptions we expect as part of normal network behaviour.
+                var cause = ex.InnerException;
+                if (cause is SocketException)
+                {
+                    if (((SocketException)cause).SocketErrorCode == SocketError.TimedOut)
+                    {
+                        Log.Info("Timeout talking to " + peer + ": " + cause.Message);
+                    }
+                    else
+                    {
+                        Log.Info("Could not connect to " + peer + ": " + cause.Message);
+                    }
+                }
+                else if (cause is IOException)
+                {
+                    Log.Info("Error talking to " + peer + ": " + cause.Message);
+                }
+                else
+                {
+                    Log.Error("Unexpected exception whilst talking to " + peer, ex);
+                }
+            }
+            finally
+            {
+                peer.Disconnect();
+                HandlePeerDeath(peer);
             }
         }
 
@@ -357,7 +339,7 @@ namespace CoinSharp
         /// <param name="listener">A listener for chain download events, may not be null.</param>
         public void StartBlockChainDownload(IPeerEventListener listener)
         {
-            lock (this)
+            lock (syncRoot)
             {
                 _downloadListener = listener;
                 // TODO be more nuanced about which peer to download from. We can also try
@@ -388,10 +370,15 @@ namespace CoinSharp
 
         protected void HandleNewPeer(Peer peer)
         {
-            lock (this)
+            lock (syncRoot)
             {
+                _peers.Add(peer);
+
                 if (_downloadListener != null && _downloadPeer == null)
+                {
                     StartBlockChainDownloadFromPeer(peer);
+                }
+
                 if (PeerConnected != null)
                 {
                     PeerConnected(this, new PeerConnectedEventArgs(_peers.Count));
@@ -401,8 +388,13 @@ namespace CoinSharp
 
         protected void HandlePeerDeath(Peer peer)
         {
-            lock (this)
+            lock (syncRoot)
             {
+                lock (_peers)
+                {
+                    _peers.Remove(peer);
+                }
+
                 if (peer == _downloadPeer)
                 {
                     _downloadPeer = null;
@@ -425,10 +417,10 @@ namespace CoinSharp
 
         private void StartBlockChainDownloadFromPeer(Peer peer)
         {
-            lock (this)
+            lock (syncRoot)
             {
-                peer.BlocksDownloaded += (sender, e) => _downloadListener.OnBlocksDownloaded((Peer) sender, e.Block, e.BlocksLeft);
-                peer.ChainDownloadStarted += (sender, e) => _downloadListener.OnChainDownloadStarted((Peer) sender, e.BlocksLeft);
+                peer.BlocksDownloaded += (sender, e) => _downloadListener.OnBlocksDownloaded((Peer)sender, e.Block, e.BlocksLeft);
+                peer.ChainDownloadStarted += (sender, e) => _downloadListener.OnChainDownloadStarted((Peer)sender, e.BlocksLeft);
                 try
                 {
                     peer.StartBlockChainDownload();
@@ -439,31 +431,6 @@ namespace CoinSharp
                     return;
                 }
                 _downloadPeer = peer;
-            }
-        }
-
-        private class PeerGroupThreadFactory : IThreadFactory
-        {
-            private static readonly AtomicInteger _poolNumber = new AtomicInteger(1);
-            private readonly AtomicInteger _threadNumber = new AtomicInteger(1);
-            private readonly string _namePrefix;
-
-            public PeerGroupThreadFactory()
-            {
-                _namePrefix = "PeerGroup-" +
-                              _poolNumber.ReturnValueAndIncrement() +
-                              "-thread-";
-            }
-
-            public Thread NewThread(IRunnable r)
-            {
-                var t = new Thread(r.Run, 0) {Name = _namePrefix + _threadNumber.ReturnValueAndIncrement()};
-                // Lower the priority of the peer threads. This is to avoid competing with UI threads created by the API
-                // user when doing lots of work, like downloading the block chain. We select a priority level one lower
-                // than the parent thread, or the minimum.
-                t.Priority = (ThreadPriority) Math.Max((int) ThreadPriority.Lowest, ((int) Thread.CurrentThread.Priority) - 1);
-                t.IsBackground = true;
-                return t;
             }
         }
     }

@@ -245,7 +245,7 @@ namespace CoinSharp
                 if (!reorg)
                 {
                     Log.InfoFormat("Received tx{0} for {1} BTC: {2}", sideChain ? " on a side chain" : "",
-                                    Utils.BitcoinValueToFriendlyString(valueDifference), tx.HashAsString);
+                                    Utils.BitcoinValueToFriendlystring(valueDifference), tx.HashAsString);
                 }
 
                 // If this transaction is already in the wallet we may need to move it into a different pool. At the very
@@ -315,7 +315,7 @@ namespace CoinSharp
                     }
                 }
 
-                Log.InfoFormat("Balance is now: {0}", Utils.BitcoinValueToFriendlyString(GetBalance()));
+                Log.InfoFormat("Balance is now: {0}", Utils.BitcoinValueToFriendlystring(GetBalance()));
 
                 // Inform anyone interested that we have new coins. Note: we may be re-entered by the event listener,
                 // so we must not make assumptions about our state after this loop returns! For example,
@@ -426,7 +426,7 @@ namespace CoinSharp
         /// <summary>
         /// If the transactions outputs are all marked as spent, and it's in the unspent map, move it.
         /// </summary>
-        private void MaybeMoveTxToSpent(Transaction tx, String context)
+        private void MaybeMoveTxToSpent(Transaction tx, string context)
         {
             if (tx.IsEveryOutputSpent())
             {
@@ -625,7 +625,7 @@ namespace CoinSharp
             lock (this)
             {
                 Log.Info("Creating send tx to " + address + " for " +
-                          Utils.BitcoinValueToFriendlyString(nanocoins));
+                          Utils.BitcoinValueToFriendlystring(nanocoins));
                 // To send money to somebody else, we need to do gather up transactions with unspent outputs until we have
                 // sufficient value. Many coin selection algorithms are possible, we use a simple but suboptimal one.
                 // TODO: Sort coins so we use the smallest first, to combat wallet fragmentation and reduce fees.
@@ -646,7 +646,7 @@ namespace CoinSharp
                 if (valueGathered < nanocoins)
                 {
                     Log.Info("Insufficient value in wallet for send, missing " +
-                              Utils.BitcoinValueToFriendlyString(nanocoins - valueGathered));
+                              Utils.BitcoinValueToFriendlystring(nanocoins - valueGathered));
                     // TODO: Should throw an exception here.
                     return null;
                 }
@@ -659,7 +659,7 @@ namespace CoinSharp
                     // The value of the inputs is greater than what we want to send. Just like in real life then,
                     // we need to take back some coins ... this is called "change". Add another output that sends the change
                     // back to us.
-                    Log.Info("  with " + Utils.BitcoinValueToFriendlyString((ulong) change) + " coins change");
+                    Log.Info("  with " + Utils.BitcoinValueToFriendlystring((ulong) change) + " coins change");
                     sendTx.AddOutput(new TransactionOutput(_params, sendTx, (ulong) change, changeAddress));
                 }
                 foreach (var output in gathered)
@@ -822,7 +822,7 @@ namespace CoinSharp
             lock (this)
             {
                 var builder = new StringBuilder();
-                builder.AppendFormat("Wallet containing {0} BTC in:", Utils.BitcoinValueToFriendlyString(GetBalance())).AppendLine();
+                builder.AppendFormat("Wallet containing {0} BTC in:", Utils.BitcoinValueToFriendlystring(GetBalance())).AppendLine();
                 builder.AppendFormat("  {0} unspent transactions", Unspent.Count).AppendLine();
                 builder.AppendFormat("  {0} spent transactions", Spent.Count).AppendLine();
                 builder.AppendFormat("  {0} pending transactions", Pending.Count).AppendLine();
@@ -1056,7 +1056,7 @@ namespace CoinSharp
                     ReprocessTxAfterReorg(pool, tx);
                 }
 
-                Log.InfoFormat("post-reorg balance is {0}", Utils.BitcoinValueToFriendlyString(GetBalance()));
+                Log.InfoFormat("post-reorg balance is {0}", Utils.BitcoinValueToFriendlystring(GetBalance()));
 
                 // Inform event listeners that a re-org took place.
                 if (Reorganized != null)

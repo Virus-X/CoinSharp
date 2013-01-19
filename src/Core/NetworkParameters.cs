@@ -101,7 +101,7 @@ namespace CoinSharp
             using (var scriptPubKeyBytes = new MemoryStream())
             {
                 Script.WriteBytes(scriptPubKeyBytes, Hex.Decode("04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f"));
-                scriptPubKeyBytes.Write(Script.OpCheckSig);
+                scriptPubKeyBytes.WriteByte(Script.OP_CHECKSIG);
                 t.AddOutput(new TransactionOutput(n, t, scriptPubKeyBytes.ToArray()));
             }
             genesisBlock.AddTransaction(t);
@@ -136,12 +136,35 @@ namespace CoinSharp
         }
 
         /// <summary>
+        /// Sets up the given NetworkParameters with testnet values.
+        /// </summary>
+        private static NetworkParameters CreateTestNet3(NetworkParameters n)
+        {
+            // Genesis hash is 0000000224b1593e3ff16a0e3b61285bbc393a39f78c8aa48c456142671f7110
+            // The proof of work limit has to start with 00, as otherwise the value will be interpreted as negative.
+            n.ProofOfWorkLimit = new BigInteger("0000000fffffffffffffffffffffffffffffffffffffffffffffffffffffffff", 16);
+            n.PacketMagic = 0x0b110907;
+            n.Port = 18333;
+            n.AddressHeader = 111;
+            n.DumpedPrivateKeyHeader = 239;
+            n.Interval = _interval;
+            n.TargetTimespan = _targetTimespan;
+            n.GenesisBlock = CreateGenesis(n);
+            n.GenesisBlock.TimeSeconds = 1296688602;
+            n.GenesisBlock.DifficultyTarget = 0x1d00ffff;
+            n.GenesisBlock.Nonce = 414098458;
+            var genesisHash = n.GenesisBlock.HashAsString;
+            Debug.Assert(genesisHash.Equals("000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943"), genesisHash);
+            return n;
+        }
+
+        /// <summary>
         /// The test chain created by Gavin.
         /// </summary>
         public static NetworkParameters TestNet()
         {
             var n = new NetworkParameters();
-            return CreateTestNet(n);
+            return CreateTestNet3(n);
         }
 
         /// <summary>
@@ -149,7 +172,7 @@ namespace CoinSharp
         /// </summary>
         public static NetworkParameters TestNet(int port)
         {
-            var tn = CreateTestNet(new NetworkParameters());
+            var tn = CreateTestNet3(new NetworkParameters());
             tn.Port = port;
             return tn;
         }

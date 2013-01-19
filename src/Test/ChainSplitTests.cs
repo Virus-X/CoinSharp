@@ -64,7 +64,7 @@ namespace CoinSharp.Test
             Assert.IsTrue(_chain.Add(b2));
             Assert.IsFalse(reorgHappened);
             // We got two blocks which generated 50 coins each, to us.
-            Assert.AreEqual("100.00", Utils.BitcoinValueToFriendlyString(_wallet.GetBalance()));
+            Assert.AreEqual("100.00", Utils.BitcoinValueToFriendlystring(_wallet.GetBalance()));
             // We now have the following chain:
             //     genesis -> b1 -> b2
             //
@@ -77,7 +77,7 @@ namespace CoinSharp.Test
             var b3 = b1.CreateNextBlock(_someOtherGuy);
             Assert.IsTrue(_chain.Add(b3));
             Assert.IsFalse(reorgHappened); // No re-org took place.
-            Assert.AreEqual("100.00", Utils.BitcoinValueToFriendlyString(_wallet.GetBalance()));
+            Assert.AreEqual("100.00", Utils.BitcoinValueToFriendlystring(_wallet.GetBalance()));
             // Now we add another block to make the alternative chain longer.
             Assert.IsTrue(_chain.Add(b3.CreateNextBlock(_someOtherGuy)));
             Assert.IsTrue(reorgHappened); // Re-org took place.
@@ -87,7 +87,7 @@ namespace CoinSharp.Test
             //                  \-> b3 -> b4
             //
             // We lost some coins! b2 is no longer a part of the best chain so our available balance should drop to 50.
-            Assert.AreEqual("50.00", Utils.BitcoinValueToFriendlyString(_wallet.GetBalance()));
+            Assert.AreEqual("50.00", Utils.BitcoinValueToFriendlystring(_wallet.GetBalance()));
             // ... and back to the first chain.
             var b5 = b2.CreateNextBlock(_coinbaseTo);
             var b6 = b5.CreateNextBlock(_coinbaseTo);
@@ -98,7 +98,7 @@ namespace CoinSharp.Test
             //                  \-> b3 -> b4
             //
             Assert.IsTrue(reorgHappened);
-            Assert.AreEqual("200.00", Utils.BitcoinValueToFriendlyString(_wallet.GetBalance()));
+            Assert.AreEqual("200.00", Utils.BitcoinValueToFriendlystring(_wallet.GetBalance()));
         }
 
         [Test]
@@ -118,7 +118,7 @@ namespace CoinSharp.Test
             Assert.IsTrue(_chain.Add(b3));
             Assert.AreEqual(0UL, _wallet.GetBalance());
             Assert.IsTrue(_chain.Add(b4));
-            Assert.AreEqual("50.00", Utils.BitcoinValueToFriendlyString(_wallet.GetBalance()));
+            Assert.AreEqual("50.00", Utils.BitcoinValueToFriendlystring(_wallet.GetBalance()));
         }
 
         [Test]
@@ -127,7 +127,7 @@ namespace CoinSharp.Test
             // Check that we can handle our own spends being rolled back by a fork.
             var b1 = _unitTestParams.GenesisBlock.CreateNextBlock(_coinbaseTo);
             _chain.Add(b1);
-            Assert.AreEqual("50.00", Utils.BitcoinValueToFriendlyString(_wallet.GetBalance()));
+            Assert.AreEqual("50.00", Utils.BitcoinValueToFriendlystring(_wallet.GetBalance()));
             var dest = new EcKey().ToAddress(_unitTestParams);
             var spend = _wallet.CreateSend(dest, Utils.ToNanoCoins(10, 0));
             _wallet.ConfirmSend(spend);
@@ -159,7 +159,7 @@ namespace CoinSharp.Test
             // keys are being shared between wallets.
             var b1 = _unitTestParams.GenesisBlock.CreateNextBlock(_coinbaseTo);
             _chain.Add(b1);
-            Assert.AreEqual("50.00", Utils.BitcoinValueToFriendlyString(_wallet.GetBalance()));
+            Assert.AreEqual("50.00", Utils.BitcoinValueToFriendlystring(_wallet.GetBalance()));
             var dest = new EcKey().ToAddress(_unitTestParams);
             var spend = _wallet.CreateSend(dest, Utils.ToNanoCoins(50, 0));
             // We do NOT confirm the spend here. That means it's not considered to be pending because createSend is

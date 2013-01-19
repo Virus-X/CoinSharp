@@ -15,6 +15,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace CoinSharp.Test
@@ -25,7 +26,7 @@ namespace CoinSharp.Test
         [Test]
         public void TestToNanoCoins()
         {
-            // String version
+            // string version
             Assert.AreEqual(Utils.Cent, Utils.ToNanoCoins("0.01"));
             Assert.AreEqual(Utils.Cent, Utils.ToNanoCoins("1E-2"));
             Assert.AreEqual(Utils.Coin + Utils.Cent, Utils.ToNanoCoins("1.01"));
@@ -45,8 +46,21 @@ namespace CoinSharp.Test
         [Test]
         public void TestFormatting()
         {
-            Assert.AreEqual("1.23", Utils.BitcoinValueToFriendlyString(Utils.ToNanoCoins(1, 23)));
-            Assert.AreEqual("-1.23", Utils.BitcoinValueToFriendlyString(-(long) Utils.ToNanoCoins(1, 23)));
+            Assert.AreEqual("1.23", Utils.BitcoinValueToFriendlystring(Utils.ToNanoCoins(1, 23)));
+            Assert.AreEqual("-1.23", Utils.BitcoinValueToFriendlystring(-(long) Utils.ToNanoCoins(1, 23)));
+        }
+
+        [Test]
+        public void TestStackRemoveAt()
+        {
+            Stack<int> stack = new Stack<int>();
+            stack.Push(1);
+            stack.Push(2);
+            stack.Push(3);
+            Assert.AreEqual(2, stack.RemoveAt(1));
+            Assert.AreEqual(2, stack.Count);
+            Assert.AreEqual(3, stack.Pop());
+            Assert.AreEqual(1, stack.Pop());
         }
     }
 }

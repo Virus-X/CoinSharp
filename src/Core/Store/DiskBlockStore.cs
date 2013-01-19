@@ -69,7 +69,7 @@ namespace CoinSharp.Store
                     _stream.Dispose();
                 }
                 _stream = file.OpenWrite(); // Do not append, create fresh.
-                _stream.Write(1); // Version.
+                _stream.WriteByte(1);
             }
             catch (IOException e1)
             {
@@ -99,7 +99,7 @@ namespace CoinSharp.Store
             using (var input = file.OpenRead())
             {
                 // Read a version byte.
-                var version = input.Read();
+                var version = input.ReadByte();
                 if (version == -1)
                 {
                     // No such file or the file was empty.

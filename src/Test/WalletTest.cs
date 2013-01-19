@@ -165,14 +165,14 @@ namespace CoinSharp.Test
             // createSend is stateless.
             var b2 = TestUtils.CreateFakeBlock(_params, _blockStore, send1).StoredBlock;
             _wallet.Receive(send1, b2, BlockChain.NewBlockType.BestChain);
-            Assert.AreEqual(Utils.BitcoinValueToFriendlyString(_wallet.GetBalance()), "0.90");
+            Assert.AreEqual(Utils.BitcoinValueToFriendlystring(_wallet.GetBalance()), "0.90");
             // And we do it again after the catch-up.
             var send2 = _wallet.CreateSend(new EcKey().ToAddress(_params), Utils.ToNanoCoins(0, 10), _myAddress);
             // What we'd really like to do is prove the official client would accept it .... no such luck unfortunately.
             _wallet.ConfirmSend(send2);
             var b3 = TestUtils.CreateFakeBlock(_params, _blockStore, send2).StoredBlock;
             _wallet.Receive(send2, b3, BlockChain.NewBlockType.BestChain);
-            Assert.AreEqual(Utils.BitcoinValueToFriendlyString(_wallet.GetBalance()), "0.80");
+            Assert.AreEqual(Utils.BitcoinValueToFriendlystring(_wallet.GetBalance()), "0.80");
         }
 
         [Test]

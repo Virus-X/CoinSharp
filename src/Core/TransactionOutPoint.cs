@@ -80,7 +80,7 @@ namespace CoinSharp
         public override void BitcoinSerializeToStream(Stream stream)
         {
             stream.Write(Utils.ReverseBytes(Hash.Bytes));
-            Utils.Uint32ToByteStreamLe((uint) Index, stream);
+            stream.WriteLittleEndian((uint) Index);
         }
 
         /// <summary>

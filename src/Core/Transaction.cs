@@ -322,7 +322,7 @@ namespace CoinSharp
                     var toAddr = new Address(Params, @out.ScriptPubKey.PubKeyHash);
                     s.Append(toAddr.ToString());
                     s.Append(" ");
-                    s.Append(Utils.BitcoinValueToFriendlyString(@out.Value));
+                    s.Append(Utils.BitcoinValueToFriendlystring(@out.Value));
                     s.Append(" BTC");
                 }
                 catch (Exception e)
@@ -414,7 +414,7 @@ namespace CoinSharp
                 using (var bos = new MemoryStream())
                 {
                     bos.Write(key.Sign(hash));
-                    bos.Write((byte) (((int) hashType + 1) | (anyoneCanPay ? 0x80 : 0)));
+                    bos.WriteByte((byte) (((int) hashType + 1) | (anyoneCanPay ? 0x80 : 0)));
                     signatures[i] = bos.ToArray();
                 }
             }
@@ -442,24 +442,29 @@ namespace CoinSharp
                 var hashType = (uint) type + 1;
                 if (anyoneCanPay)
                     hashType |= 0x80;
-                Utils.Uint32ToByteStreamLe(hashType, bos);
+                bos.WriteLittleEndian(hashType);
                 // Note that this is NOT reversed to ensure it will be signed correctly. If it were to be printed out
                 // however then we would expect that it is IS reversed.
                 return Utils.DoubleDigest(bos.ToArray());
             }
         }
 
+        public Sha256Hash HashTransactionForSignature(SigHash type, int inputIndex, byte[] connectedScript)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <exception cref="IOException"/>
         public override void BitcoinSerializeToStream(Stream stream)
         {
-            Utils.Uint32ToByteStreamLe(_version, stream);
+            stream.WriteLittleEndian(_version);
             stream.Write(new VarInt((ulong) _inputs.Count).Encode());
             foreach (var @in in _inputs)
                 @in.BitcoinSerializeToStream(stream);
             stream.Write(new VarInt((ulong) _outputs.Count).Encode());
             foreach (var @out in _outputs)
                 @out.BitcoinSerializeToStream(stream);
-            Utils.Uint32ToByteStreamLe(_lockTime, stream);
+            stream.WriteLittleEndian(_lockTime);
         }
 
         public override bool Equals(object other)

@@ -76,7 +76,7 @@ namespace CoinSharp
             if (ProtocolVersion >= 31402)
             {
                 var secs = UnixTime.ToUnixTime(DateTime.UtcNow);
-                Utils.Uint32ToByteStreamLe((uint) secs, stream);
+                stream.WriteLittleEndian((uint) secs);
             }
             Utils.Uint64ToByteStreamLe(_services, stream); // nServices.
             // Java does not provide any utility to map an IPv4 address into IPv6 space, so we have to do it by hand.
@@ -91,8 +91,8 @@ namespace CoinSharp
             }
             stream.Write(ipBytes);
             // And write out the port. Unlike the rest of the protocol, address and port is in big endian byte order.
-            stream.Write((byte) (Port >> 8));
-            stream.Write((byte) Port);
+            stream.WriteByte((byte) (Port >> 8));
+            stream.WriteByte((byte) Port);
         }
 
         protected override void Parse()

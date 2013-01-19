@@ -36,7 +36,7 @@ namespace CoinSharp.Examples
                 var chain = new BlockChain(networkParams, blockStore);
                 var peer = new Peer(networkParams, new PeerAddress(IPAddress.Loopback), chain);
                 peer.Connect();
-                new Thread(peer.Run).Start();
+                new Thread(() => peer.Run(CancellationToken.None)).Start();
 
                 var blockHash = new Sha256Hash(args[0]);
                 var future = peer.BeginGetBlock(blockHash, null, null);

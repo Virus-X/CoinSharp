@@ -51,7 +51,7 @@ namespace CoinSharp
         /// <summary>
         /// A value for difficultyTarget (nBits) that allows half of all possible hash solutions. Used in unit testing.
         /// </summary>
-        internal const uint EasiestDifficultyTarget = 0x207FFFFF;
+        internal const uint EasiestDifficultyTarget = 0x207FFFFF;        
 
         // For unit testing. If not zero, use this instead of the current time.
         internal static ulong FakeClock;
@@ -127,12 +127,12 @@ namespace CoinSharp
         /// <exception cref="IOException"/>
         private void WriteHeader(Stream stream)
         {
-            Utils.Uint32ToByteStreamLe(_version, stream);
+            stream.WriteLittleEndian(_version);
             stream.Write(Utils.ReverseBytes(_prevBlockHash.Bytes));
             stream.Write(Utils.ReverseBytes(MerkleRoot.Bytes));
-            Utils.Uint32ToByteStreamLe(_time, stream);
-            Utils.Uint32ToByteStreamLe(_difficultyTarget, stream);
-            Utils.Uint32ToByteStreamLe(_nonce, stream);
+            stream.WriteLittleEndian(_time);
+            stream.WriteLittleEndian(_difficultyTarget);
+            stream.WriteLittleEndian(_nonce);
         }
 
         /// <exception cref="IOException"/>
@@ -181,7 +181,7 @@ namespace CoinSharp
         /// <summary>
         /// The number that is one greater than the largest representable SHA-256 hash.
         /// </summary>
-        private static readonly BigInteger _largestHash = BigInteger.One.ShiftLeft(256);
+        private static readonly BigInteger LargestHash = BigInteger.One.ShiftLeft(256);
 
         /// <summary>
         /// Returns the work represented by this block.
@@ -195,7 +195,7 @@ namespace CoinSharp
         public BigInteger GetWork()
         {
             var target = GetDifficultyTargetAsInteger();
-            return _largestHash.Divide(target.Add(BigInteger.One));
+            return LargestHash.Divide(target.Add(BigInteger.One));
         }
 
         /// <summary>

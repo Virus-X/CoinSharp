@@ -36,6 +36,11 @@ namespace CoinSharp
     public class Address : VersionedChecksummedBytes
     {
         /// <summary>
+        /// An address is a RIPEMD160 hash of a public key, therefore is always 160 bits or 20 bytes.
+        /// </summary>
+        public const int Length = 20;
+
+        /// <summary>
         /// Construct an address from parameters and the hash160 form.
         /// </summary>
         /// <remarks>
@@ -45,7 +50,7 @@ namespace CoinSharp
         public Address(NetworkParameters networkParams, byte[] hash160)
             : base(networkParams.AddressHeader, hash160)
         {
-            if (hash160.Length != 20) // 160 = 8 * 20
+            if (hash160.Length != Length) // 160 = 8 * 20
                 throw new ArgumentException("Addresses are 160-bit hashes, so you must provide 20 bytes", "hash160");
         }
 

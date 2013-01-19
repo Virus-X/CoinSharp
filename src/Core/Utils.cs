@@ -15,6 +15,7 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -60,8 +61,8 @@ namespace CoinSharp
         public static ulong ToNanoCoins(uint coins, uint cents)
         {
             Debug.Assert(cents < 100);
-            var bi = coins*Coin;
-            bi += cents*Cent;
+            var bi = coins * Coin;
+            bi += cents * Cent;
             return bi;
         }
 
@@ -75,48 +76,34 @@ namespace CoinSharp
         /// <exception cref="ArithmeticException">If you try to specify fractional nanocoins.</exception>
         public static ulong ToNanoCoins(string coins)
         {
-            var value = decimal.Parse(coins, NumberStyles.Float)*Coin;
+            var value = decimal.Parse(coins, NumberStyles.Float) * Coin;
             if (value != Math.Round(value))
             {
                 throw new ArithmeticException();
             }
-            return checked((ulong) value);
+            return checked((ulong)value);
         }
 
         public static void Uint32ToByteArrayBe(uint val, byte[] @out, int offset)
         {
-            @out[offset + 0] = (byte) (val >> 24);
-            @out[offset + 1] = (byte) (val >> 16);
-            @out[offset + 2] = (byte) (val >> 8);
-            @out[offset + 3] = (byte) (val >> 0);
+            @out[offset + 0] = (byte)(val >> 24);
+            @out[offset + 1] = (byte)(val >> 16);
+            @out[offset + 2] = (byte)(val >> 8);
+            @out[offset + 3] = (byte)(val >> 0);
         }
 
         public static void Uint32ToByteArrayLe(uint val, byte[] @out, int offset)
         {
-            @out[offset + 0] = (byte) (val >> 0);
-            @out[offset + 1] = (byte) (val >> 8);
-            @out[offset + 2] = (byte) (val >> 16);
-            @out[offset + 3] = (byte) (val >> 24);
-        }
-
-        /// <exception cref="IOException"/>
-        public static void Uint32ToByteStreamLe(uint val, Stream stream)
-        {
-            stream.Write((byte) (val >> 0));
-            stream.Write((byte) (val >> 8));
-            stream.Write((byte) (val >> 16));
-            stream.Write((byte) (val >> 24));
+            @out[offset + 0] = (byte)(val >> 0);
+            @out[offset + 1] = (byte)(val >> 8);
+            @out[offset + 2] = (byte)(val >> 16);
+            @out[offset + 3] = (byte)(val >> 24);
         }
 
         /// <exception cref="IOException"/>
         public static void Uint64ToByteStreamLe(ulong val, Stream stream)
         {
-            var bytes = BitConverter.GetBytes(val);
-            if (!BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(bytes);
-            }
-            stream.Write(bytes);
+            stream.WriteLittleEndian(val);
         }
 
         /// <summary>
@@ -133,9 +120,11 @@ namespace CoinSharp
         /// </summary>
         public static byte[] DoubleDigest(byte[] input, int offset, int length)
         {
-            var algorithm = new SHA256Managed();
-            var first = algorithm.ComputeHash(input, offset, length);
-            return algorithm.ComputeHash(first);
+            using (var algorithm = new SHA256Managed())
+            {
+                var first = algorithm.ComputeHash(input, offset, length);
+                return algorithm.ComputeHash(first);
+            }
         }
 
         /// <summary>
@@ -156,7 +145,7 @@ namespace CoinSharp
         /// </summary>
         public static string BytesToHexString(byte[] bytes)
         {
-            var buf = new StringBuilder(bytes.Length*2);
+            var buf = new StringBuilder(bytes.Length * 2);
             foreach (var b in bytes)
             {
                 var s = b.ToString("x");
@@ -182,23 +171,23 @@ namespace CoinSharp
 
         public static uint ReadUint32(byte[] bytes, int offset)
         {
-            return (((uint) bytes[offset + 0]) << 0) |
-                   (((uint) bytes[offset + 1]) << 8) |
-                   (((uint) bytes[offset + 2]) << 16) |
-                   (((uint) bytes[offset + 3]) << 24);
+            return (((uint)bytes[offset + 0]) << 0) |
+                   (((uint)bytes[offset + 1]) << 8) |
+                   (((uint)bytes[offset + 2]) << 16) |
+                   (((uint)bytes[offset + 3]) << 24);
         }
 
         public static uint ReadUint32Be(byte[] bytes, int offset)
         {
-            return (((uint) bytes[offset + 0]) << 24) |
-                   (((uint) bytes[offset + 1]) << 16) |
-                   (((uint) bytes[offset + 2]) << 8) |
-                   (((uint) bytes[offset + 3]) << 0);
+            return (((uint)bytes[offset + 0]) << 24) |
+                   (((uint)bytes[offset + 1]) << 16) |
+                   (((uint)bytes[offset + 2]) << 8) |
+                   (((uint)bytes[offset + 3]) << 0);
         }
 
         public static ushort ReadUint16Be(byte[] bytes, int offset)
         {
-            return (ushort) ((bytes[offset] << 8) | bytes[offset + 1]);
+            return (ushort)((bytes[offset] << 8) | bytes[offset + 1]);
         }
 
         /// <summary>
@@ -206,35 +195,42 @@ namespace CoinSharp
         /// </summary>
         public static byte[] Sha256Hash160(byte[] input)
         {
-            var sha256 = new SHA256Managed().ComputeHash(input);
-            var digest = new RipeMD160Digest();
-            digest.BlockUpdate(sha256, 0, sha256.Length);
-            var @out = new byte[20];
-            digest.DoFinal(@out, 0);
-            return @out;
+            using (var hasher = new SHA256Managed())
+            {
+                var sha256 = hasher.ComputeHash(input);
+                return ComputeDigest(new RipeMD160Digest(), sha256);
+            }
+        }
+
+        public static byte[] ComputeDigest(GeneralDigest digest, byte[] input)
+        {
+            digest.BlockUpdate(input, 0, input.Length);
+            var output = new byte[digest.GetDigestSize()];
+            digest.DoFinal(output, 0);
+            return output;
         }
 
         /// <summary>
         /// Returns the given value in nanocoins as a 0.12 type string.
         /// </summary>
-        public static string BitcoinValueToFriendlyString(long value)
+        public static string BitcoinValueToFriendlystring(long value)
         {
             var negative = value < 0;
             if (negative)
                 value = -value;
-            var coins = value/(long) Coin;
-            var cents = value%(long) Coin;
-            return string.Format("{0}{1}.{2:00}", negative ? "-" : "", coins, cents/(long) Cent);
+            var coins = value / (long)Coin;
+            var cents = value % (long)Coin;
+            return string.Format("{0}{1}.{2:00}", negative ? "-" : "", coins, cents / (long)Cent);
         }
 
         /// <summary>
         /// Returns the given value in nanocoins as a 0.12 type string.
         /// </summary>
-        public static string BitcoinValueToFriendlyString(ulong value)
+        public static string BitcoinValueToFriendlystring(ulong value)
         {
-            var coins = value/Coin;
-            var cents = value%Coin;
-            return string.Format("{0}.{1:00}", coins, cents/Cent);
+            var coins = value / Coin;
+            var cents = value % Coin;
+            return string.Format("{0}.{1:00}", coins, cents / Cent);
         }
 
         /// <summary>
@@ -242,25 +238,154 @@ namespace CoinSharp
         /// a 4 byte big endian length field, followed by the stated number of bytes representing
         /// the number in big endian format.
         /// </summary>
-        private static BigInteger DecodeMpi(byte[] mpi)
+        public static BigInteger DecodeMpi(byte[] mpi, bool hasLength = true)
         {
-            var length = ReadUint32Be(mpi, 0);
-            var buf = new byte[length];
-            Array.Copy(mpi, 4, buf, 0, (int) length);
+            byte[] buf;
+            if (hasLength)
+            {
+                var length = ReadUint32Be(mpi, 0);
+                buf = new byte[length];
+                Array.Copy(mpi, 4, buf, 0, (int)length);
+            }
+            else
+            {
+                buf = mpi;
+            }
+
+            if (buf.Length == 0)
+            {
+                return BigInteger.Zero;
+            }
+
+            bool isNegative = (buf[0] & 0x80) == 0x80;
+            //if (isNegative)
+            //{
+            //    buf[0] &= 0x7f;
+            //}
+            //System.Numerics.BigInteger result = new System.Numerics.BigInteger(buf);
+            //return isNegative ? -result : result;
+
             return new BigInteger(1, buf);
+        }
+
+        /// <summary>
+        /// MPI encoded numbers are produced by the OpenSSL BN_bn2mpi function. They consist of
+        /// a 4 byte big endian length field, followed by the stated number of bytes representing
+        /// the number in big endian format (with a sign bit). </summary>
+        /// <param name="value"> The value. </param>
+        /// <param name="includeLength"> indicates whether the 4 byte length field should be included </param>
+        internal static byte[] EncodeMpi(BigInteger value, bool includeLength)
+        {
+            if (value.Equals(BigInteger.Zero))
+            {
+                if (!includeLength)
+                {
+                    return new byte[] { };
+                }
+
+                return new byte[] { 0x00, 0x00, 0x00, 0x00 };
+            }
+            bool isNegative = value.CompareTo(BigInteger.Zero) < 0;
+            if (isNegative)
+            {
+                value = value.Negate();
+            }
+
+            byte[] array = value.ToByteArray();
+            int length = array.Length;
+            if ((array[0] & 0x80) == 0x80)
+            {
+                length++;
+            }
+            if (includeLength)
+            {
+                byte[] result = new byte[length + 4];
+                Array.Copy(array, 0, result, length - array.Length + 3, array.Length);
+                Uint32ToByteArrayBe((uint)length, result, 0);
+                if (isNegative)
+                {
+                    result[4] |= 0x80;
+                }
+
+                return result;
+            }
+            else
+            {
+                byte[] result;
+                if (length != array.Length)
+                {
+                    result = new byte[length];
+                    Array.Copy(array, 0, result, 1, array.Length);
+                }
+                else
+                {
+                    result = array;
+                }
+                if (isNegative)
+                {
+                    result[0] |= 0x80;
+                }
+                return result;
+            }
         }
 
         // The representation of nBits uses another home-brew encoding, as a way to represent a large
         // hash value in only 32 bits.
-        internal static BigInteger DecodeCompactBits(long compact)
+        internal static BigInteger DecodeCompactBits(uint compact)
         {
-            var size = (byte) (compact >> 24);
+            var size = (byte)(compact >> 24);
             var bytes = new byte[4 + size];
             bytes[3] = size;
-            if (size >= 1) bytes[4] = (byte) (compact >> 16);
-            if (size >= 2) bytes[5] = (byte) (compact >> 8);
-            if (size >= 3) bytes[6] = (byte) (compact >> 0);
+            if (size >= 1) bytes[4] = (byte)(compact >> 16);
+            if (size >= 2) bytes[5] = (byte)(compact >> 8);
+            if (size >= 3) bytes[6] = (byte)(compact >> 0);
             return DecodeMpi(bytes);
+        }
+
+        /// <summary>
+        /// Removes element from stack at given position.
+        /// </summary>
+        /// <typeparam name="T">Type of stack element.</typeparam>
+        /// <param name="stack">Stack to remove element from</param>
+        /// <param name="elementIndex">Index of element to remove, relative to the top of the stack.</param>
+        /// <returns>Removed value</returns>
+        public static T RemoveAt<T>(this Stack<T> stack, int elementIndex)
+        {
+            if (stack.Count <= elementIndex)
+            {
+                throw new IndexOutOfRangeException();
+            }
+
+            var tmpStack = new Stack<T>();
+            for (int i = 0; i < elementIndex - 1; i++)
+            {
+                tmpStack.Push(stack.Pop());
+            }
+
+            T value = stack.Pop(); // remove elementIndex
+            for (int i = 0; i < elementIndex - 1; i++)
+            {
+                stack.Push(tmpStack.Pop());
+            }
+
+            return value;
+        }
+
+        /// <summary>
+        /// The equivalent of Java's Arrays.copyOfRange
+        /// </summary>
+        public static T[] CopyArray<T>(T[] source, int from, int to)
+        {
+            if (to >= source.Length)
+            {
+                to = source.Length - 1;
+            }
+
+            var len = to - from + 1;
+
+            var res = new T[len];
+            Array.Copy(source, from, res, 0, len);
+            return res;
         }
     }
 }

@@ -66,7 +66,7 @@ namespace CoinSharp
             using (var buf = new MemoryStream())
             {
                 // Version, for some reason.
-                Utils.Uint32ToByteStreamLe(NetworkParameters.ProtocolVersion, buf);
+                buf.WriteLittleEndian(NetworkParameters.ProtocolVersion);
                 // Then a vector of block hashes. This is actually a "block locator", a set of block
                 // identifiers that spans the entire chain with exponentially increasing gaps between
                 // them, until we end up at the genesis block. See CBlockLocator::Set()

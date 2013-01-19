@@ -17,6 +17,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Threading;
 using CoinSharp.Test.Moq;
 using CoinSharp.Store;
 using Moq;
@@ -56,7 +57,7 @@ namespace CoinSharp.Test
 
             try
             {
-                _peer.Run();
+                _peer.Run(CancellationToken.None);
                 Assert.Fail("did not throw");
             }
             catch (PeerException e)
@@ -72,7 +73,7 @@ namespace CoinSharp.Test
 
             try
             {
-                _peer.Run();
+                _peer.Run(CancellationToken.None);
                 Assert.Fail("did not throw");
             }
             catch (PeerException e)
@@ -221,7 +222,7 @@ namespace CoinSharp.Test
             _control.Setup(x => x.Shutdown()).Verifiable();
 
             var resultFuture = _peer.BeginGetBlock(b2.Hash, null, null);
-            _peer.Run();
+            _peer.Run(CancellationToken.None);
 
             Assert.AreEqual(b2.Hash, _peer.EndGetBlock(resultFuture).Hash);
 
@@ -258,7 +259,7 @@ namespace CoinSharp.Test
         private Capture<GetBlocksMessage> CaptureGetBlocksMessage()
         {
             var message = new Capture<GetBlocksMessage>();
-            _control.Setup(x => x.WriteMessage(It.IsAny<GetBlocksMessage>())).Callback<Message>(arg => message.Value = (GetBlocksMessage) arg).Verifiable();
+            _control.Setup(x => x.WriteMessage(It.IsAny<GetBlocksMessage>())).Callback<Message>(arg => message.Value = (GetBlocksMessage)arg).Verifiable();
             return message;
         }
 
@@ -266,7 +267,7 @@ namespace CoinSharp.Test
         private Capture<GetDataMessage> CaptureGetDataMessage()
         {
             var message = new Capture<GetDataMessage>();
-            _control.Setup(x => x.WriteMessage(It.IsAny<GetDataMessage>())).Callback<Message>(arg => message.Value = (GetDataMessage) arg).Verifiable();
+            _control.Setup(x => x.WriteMessage(It.IsAny<GetDataMessage>())).Callback<Message>(arg => message.Value = (GetDataMessage)arg).Verifiable();
             return message;
         }
 
@@ -277,7 +278,7 @@ namespace CoinSharp.Test
         private void RunPeerAndVerify()
         {
             _control.Setup(x => x.Shutdown()).Verifiable();
-            _peer.Run();
+            _peer.Run(CancellationToken.None);
             _control.Verify();
         }
 

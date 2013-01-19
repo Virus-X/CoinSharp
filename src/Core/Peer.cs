@@ -16,11 +16,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using CoinSharp.Threading;
 using log4net;
 
 namespace CoinSharp
@@ -128,7 +126,7 @@ namespace CoinSharp
         /// Connect() must be called first.
         /// </remarks>
         /// <exception cref="PeerException">When there is a temporary problem with the peer and we should retry later.</exception>
-        public void Run()
+        public void Run(CancellationToken token)
         {
             // This should be called in the network loop thread for this peer
             if (_conn == null)
@@ -136,18 +134,26 @@ namespace CoinSharp
 
             _running = true;
 
+            // TODO Allow event listeners to filter the message stream. Listeners are allowed to drop messages            
+
             try
             {
                 while (true)
                 {
+                    token.ThrowIfCancellationRequested();
+
                     var m = _conn.ReadMessage();
                     if (m is InventoryMessage)
                     {
-                        ProcessInv((InventoryMessage) m);
+                        ProcessInv((InventoryMessage)m);
                     }
                     else if (m is Block)
                     {
-                        ProcessBlock((Block) m);
+                        ProcessBlock((Block)m);
+                    }
+                    else if (m is Transaction)
+                    {
+                        ProcessTransaction(m as Transaction);
                     }
                     else if (m is AddressMessage)
                     {
@@ -162,12 +168,17 @@ namespace CoinSharp
                     }
                 }
             }
+            catch (OperationCanceledException)
+            {
+                Disconnect();
+            }
             catch (IOException e)
             {
                 if (!_running)
                 {
                     // This exception was expected because we are tearing down the socket as part of quitting.
                     Log.Info("Shutting down peer loop");
+                    Disconnect();
                 }
                 else
                 {
@@ -186,8 +197,11 @@ namespace CoinSharp
                 Log.Error("unexpected exception in peer loop", e);
                 throw;
             }
+        }
 
-            Disconnect();
+        private void ProcessTransaction(Transaction tx)
+        {
+            Log.DebugFormat("Received broadcast tx {0}", tx.HashAsString);
         }
 
         /// <exception cref="IOException"/>
@@ -256,7 +270,7 @@ namespace CoinSharp
             // chain, we may end up requesting blocks we already requested before. This shouldn't (in theory) happen
             // enough to be a problem.
             var topBlock = _blockChain.UnconnectedBlock;
-            var topHash = (topBlock != null ? topBlock.Hash : null);
+            var topHash = topBlock != null ? topBlock.Hash : null;
             var items = inv.Items;
             if (items.Count == 1 && items[0].Type == InventoryItem.ItemType.Block && topHash != null &&
                 items[0].Hash.Equals(topHash))
@@ -310,99 +324,11 @@ namespace CoinSharp
 
         public Block EndGetBlock(IAsyncResult asyncResult)
         {
-            return ((GetDataFuture<Block>) asyncResult).Get();
+            return ((GetDataFuture<Block>)asyncResult).Result;
         }
 
         // A GetDataFuture wraps the result of a getblock or (in future) getTransaction so the owner of the object can
         // decide whether to wait forever, wait for a short while or check later after doing other work.
-        private class GetDataFuture<T> : IAsyncResult
-        {
-            private readonly InventoryItem _item;
-            private readonly AsyncCallback _callback;
-            private readonly object _state;
-            private readonly CountDownLatch _latch;
-            private WaitHandle _waitHandle;
-            private T _result;
-
-            internal GetDataFuture(InventoryItem item, AsyncCallback callback, object state)
-            {
-                _item = item;
-                _callback = callback;
-                _state = state;
-                _latch = new CountDownLatch(1);
-            }
-
-            public bool IsCompleted
-            {
-                get { return !Equals(_result, default(T)); }
-            }
-
-            public WaitHandle AsyncWaitHandle
-            {
-                get { return _waitHandle ?? (_waitHandle = new LatchWaitHandle(_latch)); }
-            }
-
-            public object AsyncState
-            {
-                get { return _state; }
-            }
-
-            public bool CompletedSynchronously
-            {
-                get { return false; }
-            }
-
-            internal T Get()
-            {
-                _latch.Await();
-                Debug.Assert(!Equals(_result, default(T)));
-                return _result;
-            }
-
-            internal InventoryItem Item
-            {
-                get { return _item; }
-            }
-
-            /// <summary>
-            /// Called by the Peer when the result has arrived. Completes the task.
-            /// </summary>
-            internal void SetResult(T result)
-            {
-                // This should be called in the network loop thread for this peer
-                _result = result;
-                // Now release the thread that is waiting. We don't need to synchronize here as the latch establishes
-                // a memory barrier.
-                _latch.CountDown();
-                if (_callback != null)
-                    _callback(this);
-                if (_waitHandle != null)
-                {
-                    _waitHandle.Close();
-                    _waitHandle = null;
-                }
-            }
-
-            private class LatchWaitHandle : WaitHandle
-            {
-                private readonly CountDownLatch _latch;
-
-                public LatchWaitHandle(CountDownLatch latch)
-                {
-                    _latch = latch;
-                }
-
-                public override bool WaitOne(int millisecondsTimeout, bool exitContext)
-                {
-                    return WaitOne(TimeSpan.FromMilliseconds(millisecondsTimeout));
-                }
-
-                public override bool WaitOne(TimeSpan timeout, bool exitContext)
-                {
-                    return _latch.Await(timeout);
-                }
-            }
-        }
 
         /// <summary>
         /// Send the given Transaction, ie, make a payment with BitCoins. To create a transaction you can broadcast, use
@@ -489,7 +415,7 @@ namespace CoinSharp
                 // node. If that happens it means the user overrode us somewhere.
                 return -1;
             }
-            var blocksToGet = (int) (chainHeight - _blockChain.ChainHead.Height);
+            var blocksToGet = (int)(chainHeight - _blockChain.ChainHead.Height);
             return blocksToGet;
         }
 
@@ -505,7 +431,9 @@ namespace CoinSharp
                 {
                     // This is the correct way to stop an IO bound loop
                     if (_conn != null)
+                    {
                         _conn.Shutdown();
+                    }
                 }
                 catch (IOException)
                 {

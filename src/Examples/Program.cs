@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using CoinSharp.Common;
 
 namespace CoinSharp.Examples
 {
@@ -14,6 +15,7 @@ namespace CoinSharp.Examples
                 return;
             }
 
+            Logger.AddConsoleAppender(true);
             var examples = new Dictionary<string, Action<string[]>>(StringComparer.InvariantCultureIgnoreCase)
                            {
                                {"DumpWallet", DumpWallet.Run},

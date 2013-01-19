@@ -40,11 +40,11 @@ namespace CoinSharp
         private Stream _out;
         private Stream _in;
         // The IP address to which we are connecting.
-        private readonly IPAddress _remoteIp;
+        private readonly IPAddress remoteIp;
         private readonly NetworkParameters _params;
-        private readonly VersionMessage _versionMessage;
+        private readonly VersionMessage versionMessage;
 
-        private readonly BitcoinSerializer _serializer;
+        private readonly BitcoinSerializer serializer;
 
         public NetworkConnection()
         {
@@ -55,7 +55,7 @@ namespace CoinSharp
         /// is complete a functioning network channel is set up and running.
         /// </summary>
         /// <param name="peerAddress">IP address to connect to. IPv6 is not currently supported by BitCoin. If port is not positive the default port from params is used.</param>
-        /// <param name="params">Defines which network to connect to and details of the protocol.</param>
+        /// <param name="networkParams">Defines which network to connect to and details of the protocol.</param>
         /// <param name="bestHeight">How many blocks are in our best chain</param>
         /// <param name="connectTimeout">Timeout in milliseconds when initially connecting to peer</param>
         /// <exception cref="IOException">If there is a network related failure.</exception>
@@ -63,11 +63,11 @@ namespace CoinSharp
         public NetworkConnection(PeerAddress peerAddress, NetworkParameters networkParams, uint bestHeight, int connectTimeout)
         {
             _params = networkParams;
-            _remoteIp = peerAddress.Addr;
+            remoteIp = peerAddress.Addr;
 
             var port = (peerAddress.Port > 0) ? peerAddress.Port : networkParams.Port;
 
-            var address = new IPEndPoint(_remoteIp, port);
+            var address = new IPEndPoint(remoteIp, port);
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _socket.Connect(address);
             _socket.SendTimeout = _socket.ReceiveTimeout = connectTimeout;
@@ -76,31 +76,39 @@ namespace CoinSharp
             _in = new NetworkStream(_socket, FileAccess.Read);
 
             // the version message never uses check-summing. Update check-summing property after version is read.
-            _serializer = new BitcoinSerializer(networkParams, false);
+            serializer = new BitcoinSerializer(networkParams, true);  // SDL: Checksuming now ALWAYS necessary
 
+            versionMessage = Handshake(networkParams, bestHeight);
+         
+            // newer clients use check-summing
+            serializer.UseChecksumming(versionMessage.ClientVersion >= 209);
+            // Handshake is done!
+        }
+
+        private VersionMessage Handshake(NetworkParameters networkParams, uint bestHeight)
+        {
             // Announce ourselves. This has to come first to connect to clients beyond v0.30.20.2 which wait to hear
             // from us until they send their version message back.
             WriteMessage(new VersionMessage(networkParams, bestHeight));
             // When connecting, the remote peer sends us a version message with various bits of
             // useful data in it. We need to know the peer protocol version before we can talk to it.
-            _versionMessage = (VersionMessage) ReadMessage();
+            var versionMsg = (VersionMessage)ReadMessage();
             // Now it's our turn ...
             // Send an ACK message stating we accept the peers protocol version.
             WriteMessage(new VersionAck());
             // And get one back ...
             ReadMessage();
+
             // Switch to the new protocol version.
-            var peerVersion = _versionMessage.ClientVersion;
             Log.InfoFormat("Connected to peer: version={0}, subVer='{1}', services=0x{2:X}, time={3}, blocks={4}",
-                            peerVersion,
-                            _versionMessage.SubVer,
-                            _versionMessage.LocalServices,
-                            UnixTime.FromUnixTime(_versionMessage.Time),
-                            _versionMessage.BestHeight
-                );
+                            versionMsg.ClientVersion,
+                            versionMsg.SubVer,
+                            versionMsg.LocalServices,
+                            UnixTime.FromUnixTime(versionMsg.Time),
+                            versionMsg.BestHeight);
             // BitCoinSharp is a client mode implementation. That means there's not much point in us talking to other client
             // mode nodes because we can't download the data from them we need to find/verify transactions.
-            if (!_versionMessage.HasBlockChain())
+            if (!versionMsg.HasBlockChain())
             {
                 // Shut down the socket
                 try
@@ -113,9 +121,8 @@ namespace CoinSharp
                 }
                 throw new ProtocolException("Peer does not have a copy of the block chain.");
             }
-            // newer clients use check-summing
-            _serializer.UseChecksumming(peerVersion >= 209);
-            // Handshake is done!
+
+            return versionMsg;
         }
 
         /// <exception cref="IOException"/>
@@ -147,7 +154,7 @@ namespace CoinSharp
 
         public override string ToString()
         {
-            return "[" + _remoteIp + "]:" + _params.Port + " (" + (_socket.Connected ? "connected" : "disconnected") + ")";
+            return "[" + remoteIp + "]:" + _params.Port + " (" + (_socket.Connected ? "connected" : "disconnected") + ")";
         }
 
         /// <summary>
@@ -158,7 +165,7 @@ namespace CoinSharp
         /// <exception cref="IOException"/>
         public virtual Message ReadMessage()
         {
-            return _serializer.Deserialize(_in);
+            return serializer.Deserialize(_in);
         }
 
         /// <summary>
@@ -171,7 +178,7 @@ namespace CoinSharp
         {
             lock (_out)
             {
-                _serializer.Serialize(message, _out);
+                serializer.Serialize(message, _out);
             }
         }
 
@@ -180,7 +187,7 @@ namespace CoinSharp
         /// </summary>
         public virtual VersionMessage VersionMessage
         {
-            get { return _versionMessage; }
+            get { return versionMessage; }
         }
 
         #region IDisposable Members
@@ -199,7 +206,7 @@ namespace CoinSharp
             }
             if (_socket != null)
             {
-                ((IDisposable) _socket).Dispose();
+                ((IDisposable)_socket).Dispose();
                 _socket = null;
             }
         }

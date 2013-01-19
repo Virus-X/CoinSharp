@@ -100,7 +100,7 @@ namespace CoinSharp
             Outpoint.BitcoinSerializeToStream(stream);
             stream.Write(new VarInt((ulong) ScriptBytes.Length).Encode());
             stream.Write(ScriptBytes);
-            Utils.Uint32ToByteStreamLe(_sequence, stream);
+            stream.WriteLittleEndian(_sequence);
         }
 
         /// <summary>
