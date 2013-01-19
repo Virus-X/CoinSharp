@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using CoinSharp.TransactionScript;
 using NUnit.Framework;
 using Org.BouncyCastle.Utilities.Encoders;
 

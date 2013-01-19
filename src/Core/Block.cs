@@ -21,6 +21,7 @@ using System.IO;
 using System.Text;
 using CoinSharp.IO;
 using CoinSharp.Common;
+using CoinSharp.TransactionScript;
 using Org.BouncyCastle.Math;
 using log4net;
 

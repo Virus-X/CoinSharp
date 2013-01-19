@@ -18,6 +18,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using CoinSharp.IO;
+using CoinSharp.TransactionScript;
 using log4net;
 
 namespace CoinSharp

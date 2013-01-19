@@ -20,6 +20,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using CoinSharp.IO;
+using CoinSharp.TransactionScript;
 
 namespace CoinSharp
 {

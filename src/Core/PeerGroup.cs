@@ -29,11 +29,6 @@ using log4net;
 
 namespace CoinSharp
 {
-    // TODO 
-    // 1. Use Timer for checking 
-    //
-
-
     /// <summary>
     /// Maintain a number of connections to peers.
     /// </summary>

@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using CoinSharp.IO;
+using CoinSharp.TransactionScript;
 
 namespace CoinSharp
 {
