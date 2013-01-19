@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using CoinSharp.Messages;
 using log4net;
 
 namespace CoinSharp
@@ -155,6 +156,10 @@ namespace CoinSharp
                     {
                         ProcessTransaction(m as Transaction);
                     }
+                    else if (m is AlertMessage)
+                    {
+                        ProcessAlert(m as AlertMessage);
+                    }
                     else if (m is AddressMessage)
                     {
                         // We don't care about addresses of the network right now. But in future,
@@ -196,6 +201,18 @@ namespace CoinSharp
                 Disconnect();
                 Log.Error("unexpected exception in peer loop", e);
                 throw;
+            }
+        }
+
+        private void ProcessAlert(AlertMessage m)
+        {
+            if (m.IsSignatureValid)
+            {
+                Log.InfoFormat("Received alert from peer {0}: {1}", this, m.StatusBar);
+            }
+            else
+            {
+                Log.WarnFormat("Received alert with invalid signature from peer {0}: {1}", this, m.StatusBar);
             }
         }
 

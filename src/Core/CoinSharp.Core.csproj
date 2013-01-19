@@ -64,6 +64,7 @@
     <Compile Include="DownloadListener.cs" />
     <Compile Include="DumpedPrivateKey.cs" />
     <Compile Include="EcKey.cs" />
+    <Compile Include="Messages\AlertMessage.cs" />
     <Compile Include="Messages\GetBlocksMessage.cs" />
     <Compile Include="PeerHelpers\GetDataFuture.cs" />
     <Compile Include="Messages\GetDataMessage.cs" />

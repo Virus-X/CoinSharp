@@ -179,6 +179,12 @@ namespace CoinSharp
             return b;
         }
 
+        internal byte [] ReadByteArray()
+        {
+            var len = ReadVarInt();
+            return ReadBytes((int) len);
+        }
+
         internal string ReadStr()
         {
             var varInt = new VarInt(Bytes, Cursor);

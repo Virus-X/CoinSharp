@@ -20,6 +20,7 @@ using System.IO;
 using System.Text;
 using CoinSharp.Common;
 using CoinSharp.IO;
+using CoinSharp.Messages;
 using log4net;
 
 namespace CoinSharp
@@ -48,15 +49,15 @@ namespace CoinSharp
 
         static BitcoinSerializer()
         {
-            _names.Add(typeof (VersionMessage), "version");
-            _names.Add(typeof (InventoryMessage), "inv");
-            _names.Add(typeof (Block), "block");
-            _names.Add(typeof (GetDataMessage), "getdata");
-            _names.Add(typeof (Transaction), "tx");
-            _names.Add(typeof (AddressMessage), "addr");
-            _names.Add(typeof (Ping), "ping");
-            _names.Add(typeof (VersionAck), "verack");
-            _names.Add(typeof (GetBlocksMessage), "getblocks");
+            _names.Add(typeof(VersionMessage), "version");
+            _names.Add(typeof(InventoryMessage), "inv");
+            _names.Add(typeof(Block), "block");
+            _names.Add(typeof(GetDataMessage), "getdata");
+            _names.Add(typeof(Transaction), "tx");
+            _names.Add(typeof(AddressMessage), "addr");
+            _names.Add(typeof(Ping), "ping");
+            _names.Add(typeof(VersionAck), "verack");
+            _names.Add(typeof(GetBlocksMessage), "getblocks");
 
             //names.put(Pong.class, "pong");
             //names.put(GetHeadersMessage.class, "getheaders");
@@ -100,12 +101,12 @@ namespace CoinSharp
             // NULL terminating the string here.
             for (var i = 0; i < name.Length && i < _commandLen; i++)
             {
-                header[4 + i] = (byte) name[i];
+                header[4 + i] = (byte)name[i];
             }
 
             var payload = message.BitcoinSerialize();
 
-            Utils.Uint32ToByteArrayLe((uint) payload.Length, header, 4 + _commandLen);
+            Utils.Uint32ToByteArrayLe((uint)payload.Length, header, 4 + _commandLen);
 
             if (_usesChecksumming)
             {
@@ -196,7 +197,7 @@ namespace CoinSharp
             var payloadBytes = new byte[size];
             while (readCursor < payloadBytes.Length - 1)
             {
-                var bytesRead = @in.Read(payloadBytes, readCursor, (int) (size - readCursor));
+                var bytesRead = @in.Read(payloadBytes, readCursor, (int)(size - readCursor));
                 if (bytesRead == -1)
                 {
                     throw new IOException("Socket is disconnected");
@@ -239,40 +240,29 @@ namespace CoinSharp
         /// <exception cref="ProtocolException"/>
         private Message MakeMessage(string command, byte[] payloadBytes)
         {
-            // We use an if ladder rather than reflection because reflection can be slow on some platforms.
-            if (command.Equals("version"))
+            switch (command)
             {
-                return new VersionMessage(_params, payloadBytes);
+                case "version":
+                    return new VersionMessage(_params, payloadBytes);
+                case "inv":
+                    return new InventoryMessage(_params, payloadBytes);
+                case "block":
+                    return new Block(_params, payloadBytes);
+                case "getdata":
+                    return new GetDataMessage(_params, payloadBytes);
+                case "tx":
+                    return new Transaction(_params, payloadBytes);
+                case "addr":
+                    return new AddressMessage(_params, payloadBytes);
+                case "ping":
+                    return new Ping();
+                case "verack":
+                    return new VersionAck(_params, payloadBytes);
+                case "alert":
+                    return new AlertMessage(_params, payloadBytes);
+                default:
+                    throw new ProtocolException("No support for deserializing message with name " + command);
             }
-            if (command.Equals("inv"))
-            {
-                return new InventoryMessage(_params, payloadBytes);
-            }
-            if (command.Equals("block"))
-            {
-                return new Block(_params, payloadBytes);
-            }
-            if (command.Equals("getdata"))
-            {
-                return new GetDataMessage(_params, payloadBytes);
-            }
-            if (command.Equals("tx"))
-            {
-                return new Transaction(_params, payloadBytes);
-            }
-            if (command.Equals("addr"))
-            {
-                return new AddressMessage(_params, payloadBytes);
-            }
-            if (command.Equals("ping"))
-            {
-                return new Ping();
-            }
-            if (command.Equals("verack"))
-            {
-                return new VersionAck(_params, payloadBytes);
-            }
-            throw new ProtocolException("No support for deserializing message with name " + command);
         }
 
         /// <exception cref="IOException"/>
@@ -289,7 +279,7 @@ namespace CoinSharp
                 }
                 // We're looking for a run of bytes that is the same as the packet magic but we want to ignore partial
                 // magics that aren't complete. So we keep track of where we're up to with magicCursor.
-                var expectedByte = (byte) (_params.PacketMagic >> magicCursor*8);
+                var expectedByte = (byte)(_params.PacketMagic >> magicCursor * 8);
                 if (b == expectedByte)
                 {
                     magicCursor--;

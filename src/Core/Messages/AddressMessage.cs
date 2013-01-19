@@ -25,7 +25,7 @@ namespace CoinSharp
     [Serializable]
     public class AddressMessage : Message
     {
-        private const ulong _maxAddresses = 1024;
+        private const ulong MaxAddresses = 1024;
 
         internal IList<PeerAddress> Addresses { get; private set; }
 
@@ -46,8 +46,11 @@ namespace CoinSharp
         {
             var numAddresses = ReadVarInt();
             // Guard against ultra large messages that will crash us.
-            if (numAddresses > _maxAddresses)
+            if (numAddresses > MaxAddresses)
+            {
                 throw new ProtocolException("Address message too large.");
+            }
+
             Addresses = new List<PeerAddress>((int) numAddresses);
             for (var i = 0UL; i < numAddresses; i++)
             {

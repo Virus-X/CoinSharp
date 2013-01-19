@@ -36,7 +36,10 @@ namespace CoinSharp
         /// <summary>
         /// The protocol version this library implements. A value of 31800 means 0.3.18.00.
         /// </summary>
-        public const uint ProtocolVersion = 31800;
+        public const uint ProtocolVersion = 60001;
+
+        private static readonly byte[] SatoshiKey = Hex.Decode("04fc9702847840aaf195de8442ebecedf5b095cdbb9bc716bda9110971b28a49e0ead8564ff0db22209e0374782c093bb899692d524e9d6a6956e7c5ecbcd68284");
+
 
         // TODO: Seed nodes and checkpoint values should be here as well.
 
@@ -89,6 +92,8 @@ namespace CoinSharp
         /// </summary>
         public int TargetTimespan { get; private set; }
 
+        public byte[] AlertSigningKey { get; private set; }
+
         private static Block CreateGenesis(NetworkParameters n)
         {
             var genesisBlock = new Block(n);
@@ -130,6 +135,7 @@ namespace CoinSharp
             n.GenesisBlock.TimeSeconds = 1296688602;
             n.GenesisBlock.DifficultyTarget = 0x1d07fff8;
             n.GenesisBlock.Nonce = 384568319;
+            n.AlertSigningKey = SatoshiKey;
             var genesisHash = n.GenesisBlock.HashAsString;
             Debug.Assert(genesisHash.Equals("00000007199508e34a9ff81e6ec0c477a4cccff2a4767a8eee39c11db367b008"), genesisHash);
             return n;
@@ -153,6 +159,7 @@ namespace CoinSharp
             n.GenesisBlock.TimeSeconds = 1296688602;
             n.GenesisBlock.DifficultyTarget = 0x1d00ffff;
             n.GenesisBlock.Nonce = 414098458;
+            n.AlertSigningKey = SatoshiKey;
             var genesisHash = n.GenesisBlock.HashAsString;
             Debug.Assert(genesisHash.Equals("000000000933ea01ad0ee984209779baaec3ced90fa3f408719526f8d77f4943"), genesisHash);
             return n;
@@ -194,6 +201,7 @@ namespace CoinSharp
             n.GenesisBlock.DifficultyTarget = 0x1d00ffff;
             n.GenesisBlock.TimeSeconds = 1231006505;
             n.GenesisBlock.Nonce = 2083236893;
+            n.AlertSigningKey = SatoshiKey;
             var genesisHash = n.GenesisBlock.HashAsString;
             Debug.Assert(genesisHash.Equals("000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"), genesisHash);
             return n;
